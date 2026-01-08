@@ -1,0 +1,44 @@
+\chapter{Introduction} \label{chap:introduction}
+
+The deplyoyment of Artificial Intelligence (AI) algorithms 
+has necessitated the need for eXplainability AI (XAI) methods
+in order to ensure transparency, trust, and accountability.
+While much of the field has focused on heuristic explanations
+for opaque models, there is an interest in formal approaches
+that provide rigorous guarantees about the explanations generated
+\cite{logic_based_exp, darwiche2023logic}.
+
+A fundamental challenge in dynamic environments is
+explaining sequential decision-making, To address this, 
+we model these processes using Automata, which provide a
+symbolic and tractable representation of sequential decision
+functions. This approach allows us to generate formal explanations,
+why a specific sequence of actions leads to a particular outcome. 
+Automata are widely used in software verification 
+\cite{PrinciplesModelChecking}, design of communication protocols
+\cite{SPINModelChecker},and sintax parsing in compiler \cite{DragonBook}.
+When a computational model, such as a Finite Automaton (FA) or a
+Pushdown Automaton (PDA), accepts or rejects an input string,
+the reasoning behind that decision can be non-trivial. 
+Understanding why a specific input was accepted or rejected
+is crucial for debugging, and refinement purposes.
+
+This research project investigates the formalization 
+of explanations for sequential decision-making. 
+Having addressed an approach to deliver formal explanations
+for Finite Automata (FA) in the first stage of this research,
+and submitting it to a ICALP 2026. We now move to address
+explanations for Context-Free Languages (CFG) using
+Pushdown Automata (PDA).
+
+\section{Problem Statement}
+
+
+While standard XAI focuses on feature
+attribution in classifiers, the "features"
+in formal languages are sequential and
+structural.
+Since the confirmation report, the
+research scope has been refined to
+address three primary gaps:
+

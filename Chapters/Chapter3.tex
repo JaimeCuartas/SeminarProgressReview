@@ -1,0 +1,44 @@
+\chapter{Introduction} \label{chap:intro}
+
+The rapid advancement of Artificial Intelligence (AI) has led to its integration into critical decision-making processes within dynamic environments. As these systems move from static classifications to sequential interactions, the need for Formal Explainability becomes paramount to ensure safety, auditability, and trust. While many Explainable AI (XAI) methods rely on local approximations or post-hoc justifications, this research focuses on providing rigorous, symbolic explanations rooted in mathematical logic.
++3
+
+A fundamental challenge in dynamic environments is explaining sequential decisions. Whether in autonomous navigation, protocol verification, or complex parsing, a decision is rarely an isolated event but rather the result of a structured process. To address this, we model these processes using Formal Automata. Automata provide a symbolic and tractable representation of decision functions, allowing us to reason about why a specific sequence of events leads to a particular outcome, such as the rejection of an input string.
++3
+
+Following the methodology of compiling complex classifiers into tractable symbolic forms—as seen in the compilation of Bayesian networks into Decision Diagrams —this project utilizes Finite Automata (FA) and Pushdown Automata (PDA) as the underlying engines for explainability. By treating an automaton as a symbolic decision function, we can systematically identify the "culprits" behind a rejection.
++2
+
+\section{Problem Statement}
+
+The primary focus of this research has shifted from heuristic policy explanations to the formal attribution of responsibility within automata-based models. Since the confirmation report, the scope has been refined to address three specific research gaps:
+
+\begin{itemize} \item \textbf{Research Problem 1 (Completed): Explaining Finite Automata (FA).} Finite Automata represent the baseline for deterministic dynamic environments. While theoretically transparent, their state-space complexity often renders them "black boxes" to human operators. We have developed a framework to provide formal explanations for FA, which has been submitted for peer review at ICALP 2026.
+
+\item \textbf{Research Problem 2: Minimal Contrastive Explanations for Pushdown Automata (PDA).} 
+Moving up the Chomsky hierarchy, PDAs introduce memory (stacks) and context-dependency, reflecting more complex dynamic rules. This problem focuses on generating **Minimal Contrastive Explanations (CXPs)**—the smallest set of features whose state is sufficient for the current classification [cite: 9]—to transform a rejected word into an accepted one.
+
+\item \textbf{Research Problem 3: Rejection Attribution Score (RAS).} 
+Answering "why" questions is central to assigning blame and responsibility in AI failures. This research introduces the **Rejection Attribution Score (RAS)**, a quantitative metric that identifies a minimal set of currently active features responsible for a classification[cite: 9]. By formulating RAS as a constrained optimization problem (Non-Negative Least Squares), we can assign a "degree of maldad" to specific indices in a rejected sequence, providing a prioritized ranking for debugging.
+\end{itemize}
+
+\section{Research Questions}
+
+The goal of this project is to create a unified framework for explaining sequential decisions in formal models. The refined research questions are:
+
+\begin{enumerate} \item \textbf{How can we provide Formal Explanations for Finite Automata?} (Completed) \begin{enumerate} \item To define formal explanations for acceptance and rejection in FA. \item To implement a polynomial-time method for explanation extraction. \end{enumerate}
+
+\item \textbf{How can we efficiently compute Minimal Contrastive Explanations for PDAs?}
+\begin{enumerate}
+    \item To define the criteria for "minimal cardinality" [cite: 30] in repairs for context-free languages.
+    \item To develop algorithms that navigate the stack-based transitions of PDAs to find valid counterfactuals.
+
+\end{enumerate}
+
+\item \textbf{How can we quantify the responsibility of input tokens through Rejection Attribution?}
+\begin{enumerate}
+    \item To define the mathematical foundations of the RAS using symbolic reasoning.
+    \item To evaluate the use of regularized solvers to handle redundant features and ensure "fairness" in blame assignment.
+
+\end{enumerate}
+\end{enumerate}

@@ -1,0 +1,59 @@
+\section{Problem Statement}
+
+While standard XAI focuses on feature
+attribution in classifiers, the "features"
+in formal languages are sequential and
+structural.
+Since the confirmation report, the
+research scope has been refined to
+address three primary gaps:
+
+\begin{itemize} 
+    \item \textbf{Research Problem 1 (Completed): Explaining Finite Automata.} 
+    Finite Automata are often assumed to be interpretable. However,
+    large FA are cognitively inaccessible to humans.
+    We have developed a framework to compute formal
+    explanations for the acceptance and rejection of
+    inputs in FA, providing a rigorous foundation for
+    automaton-based explainability.
+
+    \item \textbf{Research Problem 2: Explaining Pushdown Automata (PDA).} 
+    Context-free languages, recognized by PDAs, introduce a stack-based memory
+    that allows to represent makes explanations more complex.
+    A single character's "badness" may depend on a token seen much earlier in the stream.
+    The second problem addresses the generation of Minimal Contrastive Explanations (CXPs)
+    the minimal sets of modifications required to turn a rejected word into an accepted one.
+
+    There is a lack of quantitative metrics that assign a "degree of responsibility" to
+    specific indices in a rejected string. 
+    The third problem focuses on the development of the Features Attribution Score (RAS),
+    using constrained optimization (Non-Negative Least Squares) to provide a probabilistic
+    ranking of which tokens most significantly contribute to a structural rejection.
+
+    \item \textbf{Research Problem 3: Explaining Markov Decision Processes.} 
+    How can the Feature Attribution Score be extended to explain failure states in
+    Reinforcement Learning policies modeled as MDPs?
+    This problem explores the adaptation of RAS to sequential decision-making,
+    where actions influence future states and rewards.
+\end{itemize}
+
+\section{Research Questions} \label{sec:research_questions}
+
+The overarching aim is to propose a unified framework for formal explainability in automata. To achieve this, we address the following refined questions:
+
+\begin{enumerate} \item \textbf{How can we provide Formal Explanations for Finite Automata?} (Completed) \begin{enumerate} \item To define formal explanations for acceptance/rejection in FA. \item To develop a polynomial-time method to compute these explanations. \end{enumerate}
+
+\item \textbf{How can we compute Minimal Contrastive Explanations for PDAs and PCFGs?}
+\begin{enumerate}
+    \item To define the criteria for "minimal cardinality" in repairs context-free languages.
+    \item To develop an algorithm that generates a set of explanations for strings rejected by a Pushdown Automaton.
+\end{enumerate}
+
+\item \textbf{How can we quantify the responsibility of individual tokens via Rejection Attribution?}
+\begin{enumerate}
+    \item To formulate the **Rejection Attribution Score (RAS)** as a constrained optimization problem.
+    \item To evaluate the effectiveness of Regularized Non-Negative Least Squares (NNLS) in handling redundant or correlated errors in a rejected input.
+\end{enumerate}
+\end{enumerate}
+
+The structure of this Progress Review is: \autoref{chap:intro} outlines the refined scope and completed milestones; \autoref{chap:literature_review} updates the state-of-the-art in formal XAI; \autoref{chap:methodology} details the RAS formulation and the move to PDAs; and \autoref{chap:timeline} provides a roadmap to thesis completion
