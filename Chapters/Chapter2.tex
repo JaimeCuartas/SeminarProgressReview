@@ -36,24 +36,3 @@ address three primary gaps:
     This problem explores the adaptation of RAS to sequential decision-making,
     where actions influence future states and rewards.
 \end{itemize}
-
-\section{Research Questions} \label{sec:research_questions}
-
-The overarching aim is to propose a unified framework for formal explainability in automata. To achieve this, we address the following refined questions:
-
-\begin{enumerate} \item \textbf{How can we provide Formal Explanations for Finite Automata?} (Completed) \begin{enumerate} \item To define formal explanations for acceptance/rejection in FA. \item To develop a polynomial-time method to compute these explanations. \end{enumerate}
-
-\item \textbf{How can we compute Minimal Contrastive Explanations for PDAs and PCFGs?}
-\begin{enumerate}
-    \item To define the criteria for "minimal cardinality" in repairs context-free languages.
-    \item To develop an algorithm that generates a set of explanations for strings rejected by a Pushdown Automaton.
-\end{enumerate}
-
-\item \textbf{How can we quantify the responsibility of individual tokens via Rejection Attribution?}
-\begin{enumerate}
-    \item To formulate the **Rejection Attribution Score (RAS)** as a constrained optimization problem.
-    \item To evaluate the effectiveness of Regularized Non-Negative Least Squares (NNLS) in handling redundant or correlated errors in a rejected input.
-\end{enumerate}
-\end{enumerate}
-
-The structure of this Progress Review is: \autoref{chap:intro} outlines the refined scope and completed milestones; \autoref{chap:literature_review} updates the state-of-the-art in formal XAI; \autoref{chap:methodology} details the RAS formulation and the move to PDAs; and \autoref{chap:timeline} provides a roadmap to thesis completion
