@@ -155,6 +155,7 @@
 \newpage
 \if@twocolumn\hbox{}\newpage\fi\fi\fi}
 \usepackage{amsmath,amsfonts,amssymb,amscd,amsthm,xspace}
+\usepackage{forest}
 \theoremstyle{plain}
 \newtheorem{example}{Example}[chapter]
 \newtheorem{theorem}{Theorem}[chapter]
@@ -205,6 +206,7 @@
    bookmarksopenlevel=0,bookmarksnumbered=true,hypertexnames=false,
    colorlinks,linkcolor={blue},citecolor={blue},urlcolor={red},
    pdfstartview={FitV},unicode,breaklinks=true]{hyperref}
+\usepackage{pgfgantt}
 \pdfstringdefDisableCommands{
    \let\\\space
 }
