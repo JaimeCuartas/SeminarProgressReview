@@ -57,7 +57,7 @@ address three primary gaps:
     The second problem addresses the generation of Minimal Contrastive Explanations (CXPs)
     the minimal sets of modifications required to turn a rejected word into an accepted one.
 
-    There is a lack of quantitative metrics that assign a "degree of responsibility" to
+    There is a lack of quantitative metrics that assign a ``degree of responsibility'' to
     specific indices in a rejected string. 
     The third problem focuses on the development of the Features Attribution Score (RAS),
     using constrained optimization (Non-Negative Least Squares) to provide a probabilistic
@@ -72,3 +72,30 @@ address three primary gaps:
 
 
 \section{Contributions to knowledge - achieved and projected }
+
+This research provides both theoretical and practical
+contributions to the field of Computer Science:
+
+\emph{Achieved Contributions}:
+\begin{itemize}
+    \item Development of an theoretical and practical approach
+    to explain Finite Automata decisions.
+    \item A paper submitted to ICALP 2026 tittled
+    ``A Formal Framework for the Explanation of Finite Automata Decisions''
+\end{itemize}
+
+\emph{Projected Contributions}:
+\begin{itemize}
+    \item Explaining Pushdown Automata decisions: (In Progress)
+    Extending the formal explanation framework to PDAs, which recognize context-free languages.
+    This involves developing algorithms to identify the minimal contrastive explanations (CXPs)
+    and Abductive Explanations (AXPs), and quantifying the contribution
+    of specific tokens to the decision (acceptance and/or rejection).
+    \item Explainable Reinforcement Learning via MDPs:
+    Extending the formal explanation framework to Markov Decision Processes (MDPs).
+    The goal is to provide verifiable explanations for failure states in Reinforcement Learning policies
+    treating the policy as a stochastic process and identifying the specific environmental factors 
+    or decision points that lead to a particular outcomes.
+\end{itemize}
+
+

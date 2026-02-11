@@ -1,4 +1,76 @@
-\chapter{Progress}
+\chapter{Maturing Theoretical Constructs and Frameworks}
+
+\section{Model Proposal: Context-Free Grammar (CFG) Explanations}
+
+The research has evolved
+from the study of Finite Automata (FA)
+to more expressive computational models.
+While FA provided a baseline for explaining
+sequential behaviors, they are insufficient
+for dynamic environments requiring
+memory or stochastic reasoning.
+
+\begin{itemize}
+  \item \textbf{From FA to PDA:}
+  We propose the use of Pushdown Automata (PDAs)
+  to model decision-making processes with memory.
+
+  Unlike FA, the addition of a stack
+  allows the description of more complex
+  languages.
+  challenging
+  explanations
+   to explain recursive behaviors and
+  long-range dependencies in agent traces
+
+\end{itemize}
+
+
+
+
+Formal Framework for Explanations
+
+We have matured our theoretical framework by
+defining and identifying two distinct types of
+formal explanations within the PDA context:
+
+\emph{Abductive Explanations}: These identify a
+minimal sufficient set of features
+(or stack operations) that guarantee the
+observed outcome (rejection).
+%
+It answers: "What specific parts of this input
+were enough to cause the failure?"
+
+\emph{Contrastive Explanations}: These identify
+the minimal necessary changes to the input or
+trace that would result in a different outcome
+(acceptance).
+%
+It answers: "What is the smallest change that
+would have fixed the failure?"
+
+
+Implementation: Developed a Python/Cython-based
+engine to automate the generation of abductive
+explanations, proving that while the transition
+to PDA is more challenging, it remains
+computationally feasible.
+
+\chapter{Progress Since Confirmation}
+
+\textbf{Transition to Context-Free Explainability}
+%
+Following the confirmation of candidacy,
+the research focus shifted from Regular Languages
+(Finite Automata) to Context-Free Languages (CFLs)
+and Pushdown Automata (PDA).
+%
+This transition was necessitated by the need to model
+systems with nested dependencies and recursive logic,
+which are strictly beyond the expressive power of
+Finite Automata.
+
 
 Definition environment.
 
@@ -63,17 +135,17 @@ For a word $w = \sigma_1\sigma_2...\sigma_n$ and an index set $I$:
     For each position $i \in \{1, \dots, n\}$ and each non-terminal $A$:    
     \begin{itemize}
         \item If $i \notin I$ (Fixed):
-        $$T[i, 1, A] = P(A \to \sigma_i)$$
+        $$T[i, i, A] = P(A \to \sigma_i)$$
         (If no such rule exists, the probability is 0).
-        \item If $i \in I$ (Wildcard):
-        $$T[i, 1, A] = \max_{\sigma \in \Sigma} \{ P(A \to \sigma) \}$$
+        \item If $i \in I$ (in cxp):
+        $$T[i, i, A] = \sum_{\sigma \in \Sigma}  P(A \to \sigma) $$
         This selects the most likely terminal that $A$ can produce at that ``broken" index.
     \end{itemize}
     \item \textbf{Recursive Step (Length $l > 1$)}
     For each length $l$ from 2 to $n$, each starting position $i$ from 1 to $n-l+1$, and each non-terminal $A$:$$T[i, l, A] = \max_{A \to BC \in R} \left( \max_{1 \le k < l} \{ P(A \to BC) \cdot T[i, k, B] \cdot T[i+k, l-k, C] \} \right)$$
 \end{itemize}
 
-\textbf{Hotspots for Contrastive Explanations}
+\textbf{Heatmap for Contrastive Explanations}
 
 
 \textbf{Theorem}: Given a word $w=\sigma_1\sigma_1\dots \sigma_n$, and grammar $G$, such that $w \notin L(G)$.
@@ -122,44 +194,43 @@ They are the necessary components of the error.
 0.2 & \quad VP \to VP \ PP & 1   & \quad PP \to P \ NP  & 1   & \quad V \to \text{sees} & 1 & \quad P \to \text{with}   & 0.3 & \quad N \to \text{telescope}
 \end{align*}
 
+% \begin{forest}
+% [VP
+%   [VP
+%     [V [sees]]
+%     [NP
+%       [Det [the]]
+%       [N [man]]
+%     ]
+%   ]
+%   [PP
+%     [P [with]]
+%     [NP
+%       [Det [the]]
+%       [N [telescope]]
+%     ]
+%   ]
+% ]
+% \end{forest}
 
-\begin{forest}
-[VP
-  [VP
-    [V [sees]]
-    [NP
-      [Det [the]]
-      [N [man]]
-    ]
-  ]
-  [PP
-    [P [with]]
-    [NP
-      [Det [the]]
-      [N [telescope]]
-    ]
-  ]
-]
-\end{forest}
-
-\begin{forest}
-[VP
-  [V [sees]]
-  [NP
-    [Det [the]]
-    [N
-      [N [man]]
-      [PP
-        [P [with]]
-        [NP
-          [Det [the]]
-          [N [telescope]]
-        ]
-      ]
-    ]
-  ]
-]
-\end{forest}
+% \begin{forest}
+% [VP
+%   [V [sees]]
+%   [NP
+%     [Det [the]]
+%     [N
+%       [N [man]]
+%       [PP
+%         [P [with]]
+%         [NP
+%           [Det [the]]
+%           [N [telescope]]
+%         ]
+%       ]
+%     ]
+%   ]
+% ]
+% \end{forest}
 
 \begin{forest}
   for tree={
@@ -168,23 +239,23 @@ They are the necessary components of the error.
   }
 [VP, label=right:{\textbf{0.2}}
   [VP, label=left:{\textbf{0.8}}
-    [V, label=left:{\textbf{1.0}} [sees, font=\itshape]]
+    [V, label=left:{\textbf{1.0}} [sees]]
     [NP, label=right:{\textbf{1.0}}
-      [Det, label=left:{\textbf{1.0}} [the, font=\itshape]]
-      [N, label=right:{\textbf{0.6}} [man, font=\itshape]]
+      [Det, label=left:{\textbf{1.0}} [the]]
+      [N, label=right:{\textbf{0.6}} [man]]
     ]
   ]
   [PP, label=right:{\textbf{1.0}}
-    [P, label=left:{\textbf{1.0}} [with, font=\itshape]]
+    [P, label=left:{\textbf{1.0}} [with]]
     [NP, label=right:{\textbf{1.0}}
-      [Det, label=left:{\textbf{1.0}} [the, font=\itshape]]
-      [N, label=right:{\textbf{0.3}} [telescope, font=\itshape]]
+      [Det, label=left:{\textbf{1.0}} [the]]
+      [N, label=right:{\textbf{0.3}} [telescope]]
     ]
   ]
 ]
 \end{forest}
 
-P(t1) = 0.6 · 0.8 · 0.2 · 0.3 = 0.0288
+P(t1) = 0.6 * 0.8 * 0.2 * 0.3 = 0.0288
 
 \begin{forest}
   for tree={
@@ -192,16 +263,16 @@ P(t1) = 0.6 · 0.8 · 0.2 · 0.3 = 0.0288
     l sep=25pt,
   }
 [VP, label=left:{\textbf{0.8}}
-  [V, label=left:{\textbf{1.0}} [sees, font=\itshape]]
+  [V, label=left:{\textbf{1.0}} [sees]]
   [NP, label=right:{\textbf{1.0}}
-    [Det, label=left:{\textbf{1.0}} [the, font=\itshape]]
+    [Det, label=left:{\textbf{1.0}} [the]]
     [N, label=right:{\textbf{0.1}}
-      [N, label=left:{\textbf{0.6}} [man, font=\itshape]]
+      [N, label=left:{\textbf{0.6}} [man]]
       [PP, label=right:{\textbf{1.0}}
-        [P, label=left:{\textbf{1.0}} [with, font=\itshape]]
+        [P, label=left:{\textbf{1.0}} [with]]
         [NP, label=right:{\textbf{1.0}}
-          [Det, label=left:{\textbf{1.0}} [the, font=\itshape]]
-          [N, label=right:{\textbf{0.3}} [telescope, font=\itshape]]
+          [Det, label=left:{\textbf{1.0}} [the]]
+          [N, label=right:{\textbf{0.3}} [telescope]]
         ]
       ]
     ]
@@ -209,19 +280,32 @@ P(t1) = 0.6 · 0.8 · 0.2 · 0.3 = 0.0288
 ]
 \end{forest}
 
-P(t2) = 0.6 · 0.8 · 0.1 · 0.3 = 0.0144
+P(t2) = 0.6 * 0.8 * 0.1 * 0.3 = 0.0144
 
-p(VP,sees the man with the telescope) = 0.0288 + 0.0144 = 0.432
+p(VP,sees the man with the telescope) = 0.0288 + 0.0144 = 0.0432
 
-Given the grammar $G$ and the rejected word $w\not\in L(G)$.
+If ``telescope'' were ``man''
+
+P(t3) = 0.6 * 0.8 * 0.2 * 0.6 = 0.0576
+
+P(t4) = 0.6 * 0.8 * 0.1 * 0.6 = 0.0288
+
+sees the man with the ? = P(t1) + P(t2) + P(t3) + P(t4) = 0.1296
+
+
+
+Given the grammar $G$ and the rejected word 
+$w=\sigma_1\sigma_2\dots \sigma_n\not\in L(G)$.
 Let $\mathcal{E} = \{I_1, I_2, \dots, I_k\}$ the collection of all 
 Minimal Contrastive Explanations 
 
-Each $I \in \mathcal{E}$ represents the hypotesis 
-$H_I$: ``The error happened exactly in the set of index $I$''.
+Each $I \in \mathcal{E}$: ``The error happened exactly in the set of index $I$''.
+and $P(I)$ Is the sum up of probabilities of all possible trees that 
+derivates accepted words $w'=\sigma'_1\sigma'_2\dots \sigma'_n$
+where $\forall_{i\not\in I} \sigma'_i=\sigma_i$
 
 $P(A)$: Probability to get an accepted Tree with a minimal cxp.
-Every $I_i$ are disjoint.
+Every tree is disjoint.
 $P(A) = P(I_1) + P(I_2) + \dots + P(I_k)$
 
 $$P(I \mid A) = \frac{P(I)}{\sum_{J \in \mathcal{E}} P(J)}$$
