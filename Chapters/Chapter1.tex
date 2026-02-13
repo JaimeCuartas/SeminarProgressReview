@@ -52,21 +52,30 @@ address three primary gaps:
 
     \item \textbf{Research Problem 2: Explaining Pushdown Automata (PDA).} 
     Context-free languages, recognized by PDAs, introduce a stack-based memory
-    that allows to represent makes explanations more complex.
-    A single character's "badness" may depend on a token seen much earlier in the stream.
-    The second problem addresses the generation of Minimal Contrastive Explanations (CXPs)
-    the minimal sets of modifications required to turn a rejected word into an accepted one.
+    that allows to represent more complex behaviors.
+    %A single character's "badness" may depend on a token seen much earlier in the stream.
+    My objective is the generation of 
+    Minimal Contrastive Explanations (CXPs)
+    the minimal sets of modifications required
+    to turn a rejected word into an accepted one;
+    %
+    and Minimal Abductive Explanations (AXps)
+    the minimal sets of tokens such that
+    the word is going to be rejected.
 
-    There is a lack of quantitative metrics that assign a ``degree of responsibility'' to
-    specific indices in a rejected string. 
-    The third problem focuses on the development of the Features Attribution Score (RAS),
-    using constrained optimization (Non-Negative Least Squares) to provide a probabilistic
-    ranking of which tokens most significantly contribute to a structural rejection.
+    Finally,
+    there is a lack of quantitative metrics that
+    assign a ``degree of responsibility'' to
+    specific indices in a rejected string.
+    % The third problem focuses on the development of the Features Attribution Score (RAS),
+    % using constrained optimization (Non-Negative Least Squares) to provide a probabilistic
+    % ranking of which tokens most significantly contribute to a structural rejection.
 
     \item \textbf{Research Problem 3: Explaining Markov Decision Processes.} 
-    How can the Feature Attribution Score be extended to explain failure states in
+    How can the Feature Attribution Score
+    be extended to explain failure states in
     Reinforcement Learning policies modeled as MDPs?
-    This problem explores the adaptation of RAS to sequential decision-making,
+    This problem explores sequential decision-making,
     where actions influence future states and rewards.
 \end{itemize}
 

@@ -51,27 +51,120 @@ It answers: "What is the smallest change that
 would have fixed the failure?"
 
 
-Implementation: Developed a Python/Cython-based
-engine to automate the generation of abductive
-explanations, proving that while the transition
-to PDA is more challenging, it remains
-computationally feasible.
-
 \chapter{Progress Since Confirmation}
 
-\textbf{Transition to Context-Free Explainability}
+\section{Preliminaries} 
+
+\textbf{Context-Free Grammars and Pushdown Automata}
+
+To provide a foundation for the proposed explanation
+extraction methods, I establish the formal definitions
+of the underlying structures.
+
+
+\begin{definition}[Context-Free Grammar]
+  A Context-Free Grammar (CFG)
+  is defined as a 4-tuple $G=(V,\Sigma ,R,S)$, where:
+  \begin{itemize}
+    \item V (Variables/Non-terminals) is a finite set of variables (non-terminal symbols).
+    \item $\Sigma$ (Terminals) is a finite set of terminal symbols, disjoint from V.
+    \item R is a finite set of production rules of the
+    form $A \rightarrow \alpha$, where $A\in V$ describes
+    a variable and $\alpha\in(V \cup\Sigma)^*$ is a string
+    of variables and terminals.
+    \item $S\in V$ is the start variable.
+  \end{itemize}
+
+\end{definition}
+
+
+\begin{definition}[Pushdown Automaton]
+  A Pushdown Automaton (PDA) extends the capabilities of a
+  Finite Automaton by incorporating an infinite memory stack.
+  A PDA is formally defined as a 7-tuple
+  $M=(Q,\Sigma,\Gamma,\delta,q_0,Z_0,F)$, where:
+  \begin{itemize}
+    %
+    \item Q is a finite set of states.
+    %
+    \item $\Sigma$ is the input alphabet, equivalent to
+    the terminals in a Context-Free Grammar.
+    %
+    \item $\Gamma$ is the stack alphabet. A finite set
+    of symbols that can be pushed onto or popped from
+    the stack.
+    %
+    \item $\delta:Q\times(\Sigma\cup\{\epsilon\})\times \Gamma \rightarrow Q \times \Gamma^*$
+    \item is the transition fuction. 
+    It dictates how the machine transitions between states and modifies the stack based on the current state, input symbol, and the top symbol of the stack.
+    %
+    \item $q_0 \in Q$ is the initial state.
+    \item $z_0 \in \Gamma$ is the initial stack symbol.
+    \item $F\subseteq Q$ is the set of accepting states.
+  \end{itemize}
+
+\end{definition}
+
+\textcolor{blue}{Need citation}
+
+It is a well-known result that for every PDA M,
+there exists an equivalent CFG G that generates
+the same language $L(M)=L(G)$.
+This equivalence allows us to utilize grammar-based
+parsing algorithms, such as CYK, to analyze the
+behavior of stack-based automata.
+
+\begin{equation}
+\begin{aligned}
+    \text{Balanced} &\to \text{Open Suffix} \\
+    \text{Suffix} &\to \text{Balanced Suffix (Nested content)} \\
+    \text{Suffix} &\to \text{Close Balanced (Close current, start new)} \\
+    \text{Suffix} &\to \text{')' (End block)} \\
+    \text{Open} &\to \text{'('} \\
+    \text{Close} &\to \text{')'}
+\end{aligned}
+\end{equation}
+
+\textbf{Transition to Explainability for Pushdown Automata decisions}
 %
 Following the confirmation of candidacy,
-the research focus shifted from Regular Languages
-(Finite Automata) to Context-Free Languages (CFLs)
-and Pushdown Automata (PDA).
+a natural progression from the study of
+Finite Automata is to consider computational
+models with greater expressive power.
+the research scope has expanded to include
+Pushdown Automata (PDA).
 %
-This transition was necessitated by the need to model
-systems with nested dependencies and recursive logic,
-which are strictly beyond the expressive power of
-Finite Automata.
+
+\textbf{The CYK-Based Explanation Engine}
+
+To extract formal explanations from these Context-Free
+structures, we have developed a novel adaptation of the
+CYK (Cocke-Younger-Kasami) algorithm.
+
+While standard CYK is primarily used for parsing,
+we utilize the resulting triangular parsing table
+as a search space for explanations.
+
+By analyzing partial trees within the CYK table,
+for a a rejected string $w$ and a PDA $\mathcal{A}$
+we can identify:
+
+\begin{itemize}
+  \item \emph{Minimal Abductive Explanations:}
+  minimal subsets of input tokens (leaves in the parse tree)
+  such that is impossible 
+  for the start symbol $S$ to be derivable
+  (does not appear in the top cell)
+  \item \emph{Minimal Contrastive Explanations:}
+  minimal set of edits (substitutions)
+  required to ``repair'' the CYK table such
+  that the start symbol $S$ is derivable
+  (appears in the top cell).
+
+\end{itemize}
 
 
+    Minimal Contrastive Explanations: In the case of rejection, the 
 Definition environment.
 
 The Grammar $\mathcal{A}$ PCFG is defined as a tuple $G = (V, \Sigma, R, S, P)$, where:
