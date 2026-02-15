@@ -1,6 +1,6 @@
 \chapter{Introduction} \label{chap:introduction}
 
-The deplyoyment of Artificial Intelligence (AI) algorithms 
+The deployment of Artificial Intelligence (AI) algorithms 
 has necessitated the need for eXplainability AI (XAI) methods
 in order to ensure transparency, trust, and accountability.
 While much of the field has focused on heuristic explanations
@@ -27,9 +27,9 @@ This research project investigates the formalization
 of explanations for sequential decision-making. 
 Having addressed an approach to deliver formal explanations
 for Finite Automata (FA) in the first stage of this research,
-and submitting it to a ICALP 2026. We now move to address
-explanations for Context-Free Languages (CFG) using
-Pushdown Automata (PDA).
+and submitting it to a ICALP 2026. I now move to address
+explanations for Context-Free Languages (CFG) /
+Pushdown Automata (PDA) decisions.
 
 \section{Refined scope - problem statement}
 
@@ -45,7 +45,7 @@ address three primary gaps:
     \item \textbf{Research Problem 1 (Completed): Explaining Finite Automata.} 
     Finite Automata are often assumed to be interpretable. However,
     large FA are cognitively inaccessible to humans.
-    We have developed a framework to compute formal
+    I have developed a framework to compute formal
     explanations for the acceptance and rejection of
     inputs in FA, providing a rigorous foundation for
     automaton-based explainability.
@@ -65,18 +65,20 @@ address three primary gaps:
 
     Finally,
     there is a lack of quantitative metrics that
-    assign a ``degree of responsibility'' to
+    assign a Feature Attribution Score
+    (``degree of responsibility'') to
     specific indices in a rejected string.
     % The third problem focuses on the development of the Features Attribution Score (RAS),
     % using constrained optimization (Non-Negative Least Squares) to provide a probabilistic
     % ranking of which tokens most significantly contribute to a structural rejection.
 
-    \item \textbf{Research Problem 3: Explaining Markov Decision Processes.} 
+    \item \textbf{Research Problem 3: Explaining Decisions of Sthocastic models.} 
     How can the Feature Attribution Score
-    be extended to explain failure states in
-    Reinforcement Learning policies modeled as MDPs?
+    be extended to explain outcomes
+    for policies in sthocastic environments?
     This problem explores sequential decision-making,
-    where actions influence future states and rewards.
+    where actions influence future states under
+    uncertain contexts.
 \end{itemize}
 
 
@@ -99,11 +101,11 @@ contributions to the field of Computer Science:
     Extending the formal explanation framework to PDAs, which recognize context-free languages.
     This involves developing algorithms to identify the minimal contrastive explanations (CXPs)
     and Abductive Explanations (AXPs), and quantifying the contribution
-    of specific tokens to the decision (acceptance and/or rejection).
-    \item Explainable Reinforcement Learning via MDPs:
+    of specific tokens to the decision (acceptance or rejection).
+    \item Explaining Decisions of Sthocastic models:
     Extending the formal explanation framework to Markov Decision Processes (MDPs).
-    The goal is to provide verifiable explanations for failure states in Reinforcement Learning policies
-    treating the policy as a stochastic process and identifying the specific environmental factors 
+    The goal is to provide verifiable explanations able to
+    identify the environmental factors
     or decision points that lead to a particular outcomes.
 \end{itemize}
 

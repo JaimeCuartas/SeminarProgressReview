@@ -1,4 +1,4 @@
-\chapter{Maturing Theoretical Constructs and Frameworks}
+\chapter{Progress}
 
 \section{Model Proposal: Context-Free Grammar (CFG) Explanations}
 
@@ -6,9 +6,49 @@ The research has evolved
 from the study of Finite Automata (FA)
 to more expressive computational models.
 While FA provided a baseline for explaining
-sequential behaviors, they are insufficient
-for dynamic environments requiring
-memory or stochastic reasoning.
+sequential behaviors,
+many complex problems require the model to
+``remember'' an arbitrary number of previous
+inputs in the sequence
+to determine the validity of subsequent inputs
+
+consider the challenge of identifying
+and explaining syntax errors in programming languages.
+Code structures are inherently hierarchical;
+blocks of logic are nested within one another,
+defined by matching delimiters such as \{ \} in C
+or ( ) in Lisp.
+
+
+Consider the abstract language $L=\{a^{n}b^{n} \mid n \geq 1\}$,
+which represents a sequence where every ``a'' must
+be matched by a corresponding ``b''.
+
+\begin{itemize}
+  %
+  \item The Limitation: A standard
+  Finite Automaton (FA) possesses no
+  auxiliary memory.
+  %
+  Therefore, it cannot count the number
+  of $a$'s to ensure they match the number
+  of $b$'s once $n$ exceeds the number
+  of states in the machine.
+  \item The Explanation Failure:
+  If an FA were used to validate such a sequence,
+  it would process inputs locally.
+  %
+  Upon encountering a mismatch (e.g., $a^{4}b^{2}$),
+  it might reject the sequence, but it lacks the
+  structural context to generate a contrastive
+  explanation such as:
+  "The sequence is invalid because the third or fourth `a'
+  was not closed by a matching `b'."
+  Instead, it can only report a
+  "transition failure" at the specific index,
+  obscuring the root cause of the error.
+
+\end{itemize}
 
 \begin{itemize}
   \item \textbf{From FA to PDA:}
@@ -18,11 +58,8 @@ memory or stochastic reasoning.
   Unlike FA, the addition of a stack
   allows the description of more complex
   languages.
-  challenging
-  explanations
-   to explain recursive behaviors and
-  long-range dependencies in agent traces
-
+  Here the challenge is how to explain
+  PDA decisions.
 \end{itemize}
 
 
@@ -49,6 +86,8 @@ trace that would result in a different outcome
 %
 It answers: "What is the smallest change that
 would have fixed the failure?"
+
+
 
 
 \chapter{Progress Since Confirmation}
