@@ -21,8 +21,8 @@ or ( ) in Lisp.
 
 
 Consider the abstract language $L=\{a^{n}b^{n} \mid n \geq 1\}$,
-which represents a sequence where every ``a'' must
-be matched by a corresponding ``b''.
+which represents a sequence where every `a' must
+be matched by a corresponding `b'.
 
 \begin{itemize}
   %
@@ -62,44 +62,112 @@ be matched by a corresponding ``b''.
   PDA decisions.
 \end{itemize}
 
+\section{Motivation: The Gap between Detection and Explanation}
 
-
-
-Formal Framework for Explanations
-
-We have matured our theoretical framework by
-defining and identifying two distinct types of
-formal explanations within the PDA context:
-
-\emph{Abductive Explanations}: These identify a
-minimal sufficient set of features
-(or stack operations) that guarantee the
-observed outcome (rejection).
+One well established applications of Context-Free Grammars
+is in the design of programming languages and compilers.
+Compilers are highly efficient at detecting when a
+sequence of tokens fails to belong to a grammar.
 %
-It answers: "What specific parts of this input
-were enough to cause the failure?"
+However, a fundamental question is:
+are they able of generating a useful \emph{explanation}
+for why the failure occurred or how to fix it?
 
-\emph{Contrastive Explanations}: These identify
-the minimal necessary changes to the input or
-trace that would result in a different outcome
-(acceptance).
+Consider the following C code, where a typo has
+introduced a double opening bracket \texttt{\{\{} in the \texttt{for} loop:
 %
-It answers: "What is the smallest change that
-would have fixed the failure?"
+\begin{lstlisting}[language=C]
+int main(){
+    for(int i=0; i<10; i++){{  // <--- Error: Double bracket
+        printf("hello");
+    }
+}
+\end{lstlisting}
+%
+When compiled (e.g., using GCC or Clang), the parser
+consumes the input until it reaches
+\textless\textless EOF\textgreater\textgreater (end-of-file),
+finding only then that
+EOF was not expected,
+instead there is an incomplete structure, the token `\}'
+is expected before \textless\textless EOF\textgreater\textgreater.
+The resulting error message is:
+%
+\begin{verbatim}
+error: expected '}' at end of input
+   5 | }
+     |  ^
+\end{verbatim}
+%
+\noindent \textbf{The Explanation:}
+While the compiler's output is correct,
+the file ended while the stack still
+contained an open brace that was not closed yet.
+It is \textit{misleading}.
+\begin{itemize}
+  %
+  \item \textbf{Root Cause:}
+  The compiler points to line 5
+  (the end of the file) as the location of the error.
+  However, the root cause is located at line 2.
+  %
+  \item \textbf{Lack of Contrastive Reasoning:}
+  A human (or a formal explainer) would identify
+  that the input is ``almost correct''.
+  %
+  The explanation should not just report a
+  missing symbol at the end,
+  but rather propose a \textit{minimal correction}.
+  %
+\end{itemize}
+%
+In this case, the minimal correction is not to add a brace at the end,
+but to remove the redundant opening brace at the loop initialization:
+%
+\begin{lstlisting}[language=C]
+int main(){
+    for(int i=0; i<10; i++){
+        printf("hello");
+    }
+}
+\end{lstlisting}
+%
+This discrepancy motivates the need for our proposed formal framework.
+We aim to move beyond isolated decisions to
+eplained decisions revealing
+these minimal set of edits (Contrastive Explanations).
 
+% Formal Framework for Explanations
 
+% We have matured our theoretical framework by
+% defining and identifying two distinct types of
+% formal explanations within the PDA context:
 
+% \emph{Abductive Explanations}: These identify a
+% minimal sufficient set of features
+% (or stack operations) that guarantee the
+% observed outcome (rejection).
+% %
+% It answers: "What specific parts of this input
+% were enough to cause the failure?"
 
-\chapter{Progress Since Confirmation}
+% \emph{Contrastive Explanations}: These identify
+% the minimal necessary changes to the input or
+% trace that would result in a different outcome
+% (acceptance).
+% %
+% It answers: "What is the smallest change that
+% would have fixed the failure?"
 
 \section{Preliminaries} 
 
 \textbf{Context-Free Grammars and Pushdown Automata}
 
 To provide a foundation for the proposed explanation
-extraction methods, I establish the formal definitions
-of the underlying structures.
-
+extraction methods, 
+standard definitions and notations
+for Context-Free Grammar and Pushdown Automata are adopted
+\cite{IntroAutomataTheory,HandbookTheoreticalContextFreeGrammar}.
 
 \begin{definition}[Context-Free Grammar]
   A Context-Free Grammar (CFG)
@@ -121,30 +189,134 @@ of the underlying structures.
   A Pushdown Automaton (PDA) extends the capabilities of a
   Finite Automaton by incorporating an infinite memory stack.
   A PDA is formally defined as a 7-tuple
-  $M=(Q,\Sigma,\Gamma,\delta,q_0,Z_0,F)$, where:
+  $\mathcal{A}=(Q,\Sigma,V,\delta,q^0,v^0,F)$, where:
   \begin{itemize}
     %
     \item Q is a finite set of states.
     %
-    \item $\Sigma$ is the input alphabet, equivalent to
-    the terminals in a Context-Free Grammar.
+    \item $\Sigma$ is the input alphabet, a finite
+    terminal alphabet.
     %
-    \item $\Gamma$ is the stack alphabet. A finite set
-    of symbols that can be pushed onto or popped from
-    the stack.
+    \item $V$ is the stack alphabet, a finite
+    nonterminal alphabet that can be pushed
+    onto or popped from the stack.
     %
-    \item $\delta:Q\times(\Sigma\cup\{\epsilon\})\times \Gamma \rightarrow Q \times \Gamma^*$
-    \item is the transition fuction. 
-    It dictates how the machine transitions between states and modifies the stack based on the current state, input symbol, and the top symbol of the stack.
+    \item $\delta:Q\times(\Sigma\cup\{\epsilon\}) \times V \rightarrow \mathcal{P}(Q \times V^*)$
     %
-    \item $q_0 \in Q$ is the initial state.
-    \item $z_0 \in \Gamma$ is the initial stack symbol.
+    \footnote{$\mathcal{P}$ denotes the power set
+    (the set of all its subsets).
+    %
+    $V^*$ and $\Sigma^*$ denote the Kleene closures
+    of the stack and input alphabets,
+    respectively,
+    %
+    representing the sets of all finite strings formed
+    by those alphabets.}
+    %
+    is the transition fuction.
+    %
+    It dictates how the machine transitions between states and
+    modifies the stack based on the current state, input symbol,
+    and the top symbol of the stack.
+    %
+    \item $q^0 \in Q$ is the initial state.
+    \item $v^0 \in V$ is the initial pushdownstore symbol.
     \item $F\subseteq Q$ is the set of accepting states.
   \end{itemize}
-
+%
+  A configuration of $\mathcal{A}$ is a triple $c=(q, \gamma, x)$ in
+  $Q\times V^*\times\Sigma^*$. And the automaton moves from c into configuration
+  $c'=(q',\gamma', x')$, denoted as $c\vdash c'$ if:
+  %
+  \begin{itemize}
+    %
+    \item $\gamma =\gamma_1 v(v\in V)$
+    %
+    \footnote{$\gamma_1 \in V^*$ represents the remaining symbols on the
+    stack below the top symbol $v$.
+    %
+    Thus, $\gamma$ represents the full current stack, formed by
+    the top symbol $v$ (to be processed) and the rest of the stack $\gamma_1$.}
+    %
+    , $x=ax' (a\in \Sigma)$,
+    $\gamma'=\gamma_1 m(m\in V*)$ and $(q', m)\in \delta(q, a, v)$, namely ``a-move'';
+    %
+    \item or $\gamma =\gamma_1 v(v\in V)$, $x=x'$, $\gamma'=\gamma_1m(m\in V^*)$
+    and $(q',m)\in \delta(q,\epsilon,v)$, namely ``$\epsilon$-move''.
+  \end{itemize}
+  %
+  A \emph{word} is accepted by a pushdown automaton if, starting with an
+  empty stack, there is a path through the automaton such
+  that the automaton stops in an
+  accepting state after the entire string has been read.
+  %
+  And the \emph{language} recognized by a PDA
+  is the set of all accepted words.
+  %
 \end{definition}
 
-\textcolor{blue}{Need citation}
+A language is context-free iff there exists
+a PDA $\mathcal{A}$ 
+that accepts the same language (L(G)=L(M)).
+Thus, provide an explanation for
+a PDA decision or its respective grammar is
+equivalent.
+
+%
+The following CFG that generates the
+language of balanced parentheses
+(a subset of the Dyck language)
+%
+\footnote{
+  The Dyck language describes a set of strings
+  with balanced and properly
+  nested brackets (e.g., (), [], \{\})
+  %
+  \cite{HandbookTheoreticalContextFreeGrammar}.
+  The example focuses solely on non-empty
+  sequences of balanced ( and ).
+}
+%
+is used throughout the document
+to illustrate the proposed ideas.
+%
+
+\begin{example}
+  Let $G=(\{S\}, \{(,)\}, R, S)$ be the grammar
+  defined by the following 
+  production rules $R$:
+
+  \begin{equation}
+  \begin{aligned}
+      S &\to ( S ) \, S \\
+      S &\to ( S ) \\
+      S &\to () \, S \\
+      S &\to () 
+  \end{aligned}
+  \end{equation}
+\end{example}
+% \begin{equation}
+  % \begin{aligned}
+  %     \text{Balanced} \to& \text{Nested Balanced} \\
+  %     \text{Balanced} \to& \text{Unclosed Closed} \\
+  %     \text{Balanced} \to&\text{Pair Balanced} \\
+  %     \text{Balanced} \to& \text{Open Close} \\
+  %     \text{Nested} \to& \text{Unclosed Close} \\
+  %     \text{Unclosed} \to& \text{Open Balanced} \\
+  %     \text{Pair} \to& \text{Open Close} \\
+  %     \text{Open} \to& \text{'('} \\
+  %     \text{Close} \to& \text{')'}
+  % \end{aligned}
+  % \end{equation}
+
+\begin{figure}[t]
+  \centering
+    \input{/Users/jcua0001/Documents/Monash-Thesis-Template-Latex-main/Figures/PDA/parenthesis_PDA.tex}
+    \caption{A Pushdown Automaton $\mathcal{A}$
+    accepting the language of balanced parentheses.
+    The symbol \$ is used as the bottom-of-stack marker.}
+  \label{fig:pda_example}
+\end{figure}
 
 It is a well-known result that for every PDA M,
 there exists an equivalent CFG G that generates
