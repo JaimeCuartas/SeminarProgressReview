@@ -137,28 +137,6 @@ We aim to move beyond isolated decisions to
 eplained decisions revealing
 these minimal set of edits (Contrastive Explanations).
 
-% Formal Framework for Explanations
-
-% We have matured our theoretical framework by
-% defining and identifying two distinct types of
-% formal explanations within the PDA context:
-
-% \emph{Abductive Explanations}: These identify a
-% minimal sufficient set of features
-% (or stack operations) that guarantee the
-% observed outcome (rejection).
-% %
-% It answers: "What specific parts of this input
-% were enough to cause the failure?"
-
-% \emph{Contrastive Explanations}: These identify
-% the minimal necessary changes to the input or
-% trace that would result in a different outcome
-% (acceptance).
-% %
-% It answers: "What is the smallest change that
-% would have fixed the failure?"
-
 \section{Preliminaries} 
 
 \textbf{Context-Free Grammars and Pushdown Automata}
@@ -181,8 +159,53 @@ for Context-Free Grammar and Pushdown Automata are adopted
     of variables and terminals.
     \item $S\in V$ is the start variable.
   \end{itemize}
-
 \end{definition}
+%
+The following CFG that generates the
+language of balanced parentheses
+(a subset of the Dyck language)
+%
+\footnote{
+  The Dyck language describes a set of strings
+  with balanced and properly
+  nested brackets (e.g., (), [], \{\})
+  %
+  \cite{HandbookTheoreticalContextFreeGrammar}.
+  The example focuses solely on non-empty
+  sequences of balanced ( and ).
+}
+%
+and is used throughout the document
+to illustrate the proposed ideas.
+%
+
+\begin{example}
+  \label{ex:grammar_balanced}
+  Let $G=(\{Balanced\}, \{(,)\}, R, Balanced)$ be the grammar
+  defined by the following 
+  production rules $R$:
+  %
+  \begin{equation}
+  \begin{aligned}
+      Balanced &\to ( \, Balanced \, ) \, Balanced & \text{(Rule 1)}\\
+      Balanced &\to ( \, Balanced \, ) & \text{(Rule 2)}\\
+      Balanced &\to ( \, ) \, Balanced & \text{(Rule 3)}\\
+      Balanced &\to ( \, ) & \text{(Rule 4)}
+  \end{aligned}
+  \end{equation}
+  %
+  This grammar generates the language of
+  properly nested parentheses.
+  For instance, the string ``()()''
+  can be derivated as follows.
+  %
+  \begin{equation}
+  \begin{aligned}
+      Balanced &\Rightarrow ( \, ) \, \mathbf{Balanced}  && \text{(Rule 3: parentheses and Balanced)} \\
+               &\Rightarrow ( \, ) \, ( \, ) && \text{(Rule 4: Reduce final `Balanced' to `()')}
+  \end{aligned}
+  \end{equation}
+\end{example}
 
 
 \begin{definition}[Pushdown Automaton]
@@ -230,18 +253,19 @@ for Context-Free Grammar and Pushdown Automata are adopted
   %
   \begin{itemize}
     %
-    \item $\gamma =\gamma_1 v(v\in V)$
+    \item $\gamma = v \gamma_1(v\in V)$
     %
-    \footnote{$\gamma_1 \in V^*$ represents the remaining symbols on the
+    \footnote{$\gamma_{1} \in V^*$ represents
+    the remaining symbols on the
     stack below the top symbol $v$.
     %
     Thus, $\gamma$ represents the full current stack, formed by
     the top symbol $v$ (to be processed) and the rest of the stack $\gamma_1$.}
     %
     , $x=ax' (a\in \Sigma)$,
-    $\gamma'=\gamma_1 m(m\in V*)$ and $(q', m)\in \delta(q, a, v)$, namely ``a-move'';
+    $\gamma'= m \gamma_1(m\in V^*)$ and $(q', m)\in \delta(q, a, v)$, namely ``a-move'';
     %
-    \item or $\gamma =\gamma_1 v(v\in V)$, $x=x'$, $\gamma'=\gamma_1m(m\in V^*)$
+    \item or $\gamma = v \gamma_1(v\in V)$, $x=x'$, $\gamma'= m \gamma_1(m\in V^*)$
     and $(q',m)\in \delta(q,\epsilon,v)$, namely ``$\epsilon$-move''.
   \end{itemize}
   %
@@ -250,66 +274,21 @@ for Context-Free Grammar and Pushdown Automata are adopted
   that the automaton stops in an
   accepting state after the entire string has been read.
   %
-  And the \emph{language} recognized by a PDA
-  is the set of all accepted words.
+  The \emph{language} recognized by a PDA $\mathcal{A}$
+  is the set of all accepted words, denoted as $L(\mathcal{A})$.
   %
 \end{definition}
-
-A language is context-free iff there exists
-a PDA $\mathcal{A}$ 
-that accepts the same language (L(G)=L(M)).
-Thus, provide an explanation for
-a PDA decision or its respective grammar is
-equivalent.
-
 %
-The following CFG that generates the
-language of balanced parentheses
-(a subset of the Dyck language)
+A fundamental equivalence between CFGs and PDAs:
+a language $L$ is context-free iff there exists a
+PDA $\mathcal{A}$ such that $L(\mathcal{A})=L$
+\cite{HandbookTheoreticalContextFreeGrammar, IntroAutomataTheory}.
 %
-\footnote{
-  The Dyck language describes a set of strings
-  with balanced and properly
-  nested brackets (e.g., (), [], \{\})
-  %
-  \cite{HandbookTheoreticalContextFreeGrammar}.
-  The example focuses solely on non-empty
-  sequences of balanced ( and ).
-}
-%
-is used throughout the document
-to illustrate the proposed ideas.
-%
+This equivalence allows us to use grammar-based
+parsing algorithms, such as CYK, to analyze the
+behavior of PDAs.
 
-\begin{example}
-  Let $G=(\{S\}, \{(,)\}, R, S)$ be the grammar
-  defined by the following 
-  production rules $R$:
-
-  \begin{equation}
-  \begin{aligned}
-      S &\to ( S ) \, S \\
-      S &\to ( S ) \\
-      S &\to () \, S \\
-      S &\to () 
-  \end{aligned}
-  \end{equation}
-\end{example}
-% \begin{equation}
-  % \begin{aligned}
-  %     \text{Balanced} \to& \text{Nested Balanced} \\
-  %     \text{Balanced} \to& \text{Unclosed Closed} \\
-  %     \text{Balanced} \to&\text{Pair Balanced} \\
-  %     \text{Balanced} \to& \text{Open Close} \\
-  %     \text{Nested} \to& \text{Unclosed Close} \\
-  %     \text{Unclosed} \to& \text{Open Balanced} \\
-  %     \text{Pair} \to& \text{Open Close} \\
-  %     \text{Open} \to& \text{'('} \\
-  %     \text{Close} \to& \text{')'}
-  % \end{aligned}
-  % \end{equation}
-
-\begin{figure}[t]
+\begin{figure}[h]
   \centering
     \input{/Users/jcua0001/Documents/Monash-Thesis-Template-Latex-main/Figures/PDA/parenthesis_PDA.tex}
     \caption{A Pushdown Automaton $\mathcal{A}$
@@ -318,23 +297,46 @@ to illustrate the proposed ideas.
   \label{fig:pda_example}
 \end{figure}
 
-It is a well-known result that for every PDA M,
-there exists an equivalent CFG G that generates
-the same language $L(M)=L(G)$.
-This equivalence allows us to utilize grammar-based
-parsing algorithms, such as CYK, to analyze the
-behavior of stack-based automata.
+\begin{example}
 
-\begin{equation}
-\begin{aligned}
-    \text{Balanced} &\to \text{Open Suffix} \\
-    \text{Suffix} &\to \text{Balanced Suffix (Nested content)} \\
-    \text{Suffix} &\to \text{Close Balanced (Close current, start new)} \\
-    \text{Suffix} &\to \text{')' (End block)} \\
-    \text{Open} &\to \text{'('} \\
-    \text{Close} &\to \text{')'}
-\end{aligned}
-\end{equation}
+  Let $\mathcal{A}$ be the PDA
+  that accepts the language generated by $G$ in 
+  \autoref{ex:grammar_balanced}.
+  The PDA uses a stack to track the depth of nesting,
+  pushing a symbol for every open parenthesis and popping
+  for every closed one. $B$ represents \textit{Balanced} in $G$.
+  
+  \begin{itemize}
+      \item States: $Q = \{q_0, q_1, q_f\}$, $q^0=q_0$, $F=\{q_f\}$
+      \item Input Alphabet: $\Sigma = \{(,)\}$
+      \item Stack Alphabet: $V = \{ (, ), B, \$ \}$, $v^0=B$
+      \item Transitions:
+      \begin{enumerate}
+          \item $\delta(q_0, \epsilon, \epsilon) = \{(q_1, B\$)\}$ \quad (Initialize stack with Start Symbol)
+          \item $\delta(q_1, \epsilon, B) = \{(q_1, (B)B),(q_1, (B)),(q_1, ()B),(q_1, ())\}$ \quad (Expand $B$)
+          \item $\delta(q_1, (, () = \{(q_1, \epsilon)\}$ \quad (Match input `(' with stack `(')
+          \item $\delta(q_1, ), )) = \{(q_1, \epsilon)\}$ \quad (Match input `)' with stack `)')
+          \item $\delta(q_1, \epsilon, \$) = \{(q_f, \epsilon)\}$ \quad (Accept if bottom marker is reached)
+      \end{enumerate}
+  \end{itemize}
+
+  \autoref{fig:pda_example} is the state diagram that illustrates this PDA.
+
+  \begin{equation}
+    \begin{aligned}
+        & (q_0, \text{()()}, \epsilon) \\
+        \vdash \ & (q_1, \text{()()}, B\$) && \text{(Initialize)} \\
+        \vdash \ & (q_1, \text{()()}, ()B\$) && \text{(Expand } B \to ()B \text{)} \\
+        \vdash \ & (q_1, \text{)()}, )B\$) && \text{(Match `(')} \\
+        \vdash \ & (q_1, \text{()}, B\$) && \text{(Match `)')} \\
+        \vdash \ & (q_1, \text{()}, ()\$) && \text{(Expand } B \to () \text{)} \\
+        \vdash \ & (q_1, \text{)}, )\$) && \text{(Match `(')} \\
+        \vdash \ & (q_1, \epsilon, \$) && \text{(Match `)')} \\
+        \vdash \ & (q_{f}, \epsilon, \epsilon) && \text{(Accept)}
+    \end{aligned}
+  \end{equation}
+\end{example}
+
 
 \textbf{Transition to Explainability for Pushdown Automata decisions}
 %

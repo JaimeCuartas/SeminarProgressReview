@@ -12,7 +12,7 @@
 %% ----------------------------------------------------------------
 
 % Set up the document
-\documentclass[a4paper, 11pt, oneside]{Thesis}  % Use the "Thesis" style, based on the ECS Thesis style by Steve Gunn
+\documentclass[a4paper, 5pt, oneside]{Thesis}  % Use the "Thesis" style, based on the ECS Thesis style by Steve Gunn
 %
 % Put your figures in this directory
 \graphicspath{Figures/}  % Location of the graphics files (set up for graphics to be in PDF format)
@@ -22,7 +22,13 @@
 \usepackage[square, numbers, comma, sort&compress]{natbib}  % Use the "Natbib" style for the references in the Bibliography
 \usepackage{verbatim}  % Needed for the "comment" environment to make LaTeX comments
 \usepackage{vector}  % Allows "\bvec{}" and "\buvec{}" for "blackboard" style bold vectors in maths
-\hypersetup{urlcolor=blue, colorlinks=true}  % Colours hyperlinks in blue, but this can be distracting if there are many links.
+\usepackage{enumitem}
+\setlist[itemize]{noitemsep, topsep=-\parskip}
+\hypersetup{urlcolor=blue, colorlinks=true}
+\usepackage{tikz}
+\usetikzlibrary{arrows,automata,positioning}
+\usetikzlibrary{fit,shapes}
+%\usepackage[bottom]{footmisc}
 
 %% ----------------------------------------------------------------
 \begin{document}
@@ -115,7 +121,7 @@
 \listoftables  % Write out the List of Tables
 
 %% ----------------------------------------------------------------
-\setstretch{1.5}  % Set the line spacing to 1.5, this makes the following tables easier to read
+\setstretch{1.25}  % Set the line spacing to 1.5, this makes the following tables easier to read
 \clearpage  % Start a new page
 % \lhead{\emph{Abbreviations}}  % Set the left side page header to "Abbreviations"
 % \listofsymbols{ll}  % Include a list of Abbreviations (a table of two columns)

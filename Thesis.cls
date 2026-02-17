@@ -192,11 +192,25 @@
 \usepackage{rotating}
 \usepackage{listings}
 \usepackage{lstpatch}
-\lstset{captionpos=b,
-        frame=tb,
-        basicstyle=\scriptsize\ttfamily,
-        showstringspaces=false,
-        keepspaces=true}
+% \lstset{captionpos=b,
+%         frame=tb,
+%         basicstyle=\scriptsize\ttfamily,
+%         showstringspaces=false,
+%         keepspaces=true}
+\lstset{
+  belowcaptionskip=1\baselineskip,
+  breaklines=true,
+  frame=L,
+  xleftmargin=\parindent,
+  language=C,
+  showstringspaces=false,
+  basicstyle=\ttfamily,
+  keywordstyle=\bfseries\color{green!40!black},
+  commentstyle=\itshape\color{purple!40!black},
+  identifierstyle=\color{blue},
+  stringstyle=\color{orange},
+  numbers=left,
+}
 \lstdefinestyle{matlab} {
         language=Matlab,
         keywordstyle=\color{blue},
@@ -206,6 +220,7 @@
    bookmarksopenlevel=0,bookmarksnumbered=true,hypertexnames=false,
    colorlinks,linkcolor={blue},citecolor={blue},urlcolor={red},
    pdfstartview={FitV},unicode,breaklinks=true]{hyperref}
+\def\exampleautorefname{Example}
 \usepackage{pgfgantt}
 \pdfstringdefDisableCommands{
    \let\\\space
