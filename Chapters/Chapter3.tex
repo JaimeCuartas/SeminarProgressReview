@@ -5,20 +5,14 @@
 The research has evolved
 from the study of Finite Automata (FA)
 to more expressive computational models.
+%
 While FA provided a baseline for explaining
 sequential behaviors,
+%
 many complex problems require the model to
 ``remember'' an arbitrary number of previous
 inputs in the sequence
 to determine the validity of subsequent inputs
-
-consider the challenge of identifying
-and explaining syntax errors in programming languages.
-Code structures are inherently hierarchical;
-blocks of logic are nested within one another,
-defined by matching delimiters such as \{ \} in C
-or ( ) in Lisp.
-
 
 Consider the abstract language $L=\{a^{n}b^{n} \mid n \geq 1\}$,
 which represents a sequence where every `a' must
@@ -139,7 +133,7 @@ these minimal set of edits (Contrastive Explanations).
 
 \section{Preliminaries} 
 
-\textbf{Pushdown Automata and Context-Free Grammars}
+\subsection{Pushdown Automata and Context-Free Grammars}
 
 To provide a foundation for the proposed explanation
 extraction methods, 
@@ -260,7 +254,7 @@ to illustrate the proposed ideas.
       \item Stack Alphabet: $V = \{ (, ), B, \$ \}$, $v^0=B$
       \item Transitions:
       \begin{enumerate}
-          \item $\delta(q_0, \epsilon, \epsilon) = \{(q_1, B\$)\}$ \quad (Initialize stack with Start Symbol)
+          \item $\delta(q_0, \epsilon, \epsilon) = \{(q_1, B\,\$)\}$ \quad (Initialize stack with Start Symbol)
           \item $\delta(q_1, \epsilon, B) = \{(q_1, (B)B),(q_1, (B)),(q_1, ()B),(q_1, ())\}$ \quad (Expand $B$)
           \item $\delta(q_1, (, () = \{(q_1, \epsilon)\}$ \quad (Match input `(' with stack `(')
           \item $\delta(q_1, ), )) = \{(q_1, \epsilon)\}$ \quad (Match input `)' with stack `)')
@@ -333,337 +327,130 @@ behavior of PDAs.
   \begin{equation}
   \begin{aligned}
       Balanced &\Rightarrow ( \, ) \, \mathbf{Balanced}  && \text{(Rule 3: parentheses and Balanced)} \\
-               &\Rightarrow ( \, ) \, ( \, ) && \text{(Rule 4: Reduce final `Balanced' to `()')}
+               &\Rightarrow ( \, ) \, ( \, ) && \text{(Rule 4: Reduce `Balanced' to `()')}
   \end{aligned}
   \end{equation}
 \end{example}
 
-
-
-
-\textbf{Transition to Explainability for Pushdown Automata decisions}
+To analyze the behavior of the PDA
+using grammar-based approaches, we must first standardize
+the grammar structure (e.g. Chomsky Normal Form).
 %
-Following the confirmation of candidacy,
-a natural progression from the study of
-Finite Automata is to consider computational
-models with greater expressive power.
-the research scope has expanded to include
-Pushdown Automata (PDA).
-%
+This enables the use of efficient
+parsing algorithms 
+like CYK (Cocke-Younger-Kasami) \cite{CYK1967, ParsingGuide}.
 
-\textbf{The CYK-Based Explanation Engine}
+\subsection{Chomsky Normal Form}
 
-To extract formal explanations from these Context-Free
-structures, we have developed a novel adaptation of the
-CYK (Cocke-Younger-Kasami) algorithm.
+Parsing algorithms often require the grammar to be in a
+canonical form to ensure predictable execution complexity.
 
-While standard CYK is primarily used for parsing,
-we utilize the resulting triangular parsing table
-as a search space for explanations.
+\begin{definition}[Chomsky Normal Form]
+  A Context-Free Grammar $G=(V, \Sigma, R, S)$ is in
+  \textit{Chomsky Normal Form} (CNF) \cite{IntroAutomataTheory} if every production rule
+  in $R$ is of one of the following two forms:
+  \begin{itemize}
+      \item $A \rightarrow BC$ (where $A, B, C \in V$)
+      \item $A \rightarrow a$ (where $a \in \Sigma$ and $a \neq \epsilon$)
+  \end{itemize}
+\end{definition}
 
-By analyzing partial trees within the CYK table,
-for a a rejected string $w$ and a PDA $\mathcal{A}$
-we can identify:
+For every CFG $G$ whose languge contains at least one string
+other than $\epsilon$, then there is a grammar $G_1$
+in Chomsky Normal Form.
 
-\begin{itemize}
-  \item \emph{Minimal Abductive Explanations:}
-  minimal subsets of input tokens (leaves in the parse tree)
-  such that is impossible 
-  for the start symbol $S$ to be derivable
-  (does not appear in the top cell)
-  \item \emph{Minimal Contrastive Explanations:}
-  minimal set of edits (substitutions)
-  required to ``repair'' the CYK table such
-  that the start symbol $S$ is derivable
-  (appears in the top cell).
+\begin{example}
+  \label{ex:cnf_conversion}
+  Consider the grammar $G$ from \autoref{ex:grammar_balanced}.
+  We transform $G$ into an
+  equivalent grammar $G'=(V', \Sigma, R', S)$ in CNF.
+  
+  \noindent \textbf{Step 1: Terminals to Non-terminals.}
+  To introduce variables $L$ and $R$ for terminals `(' and `)'.
+  \[ L \to ( \quad \text{and} \quad R \to ) \]
+  
+  \noindent \textbf{Step 2: Binary decomposition.}
+  To rewrite the original rules using new variables
+  and break down productions into binary steps.
+  
+  The resulting production rules $R'$ are:
+  \begin{center}
+  \begin{tabular}{r r l l}
+    Balanced  &$\to$&$ Nested\,Balanced$ & (Represents `( Balanced ) Balanced' ) \\
+              &$\mid$& $Unclosed\,R$ & (Represents `( Balanced )' ) \\
+              &$\mid$& $Pair\,Balanced$ & (Represents `( ) Balanced' ) \\
+              &$\mid$& $L\,R$ & (Represents `( )' ) \\
+    Nested &$\to$& $Unclosed\,R$ \\
+    Unclosed &$\to$& $L\,Balanced$  \\
+    Pair &$\to$& $L\,R$ \\
+    L &$\to$& ( \\
+    R &$\to$& )
+  \end{tabular}
+  \end{center}
+\end{example}
 
-\end{itemize}
+\subsection{The CYK Algorithm}
 
+The Cocke-Younger-Kasami (CYK) \cite{CYK1967, ParsingGuide}
+algorithm is a bottom-up
+parsing method that given a CFG $G$ in CNF
+determines whether a string $w$ belongs
+to a language $L(G)$. It operates via
+dynamic programming,
+constructing a triangular table
+where each cell $T[i,j]$ contains the set of
+non-terminals that can generate
+the substring of $w$ starting at $i$ and ending at $j$.
 
-    Minimal Contrastive Explanations: In the case of rejection, the 
-Definition environment.
+\begin{definition}[CYK Table Construction]
+  For an input string $w = w_1 w_2 \dots w_n$:
+  \begin{enumerate}
+      \item \textbf{Base Case:} For each $i \in \{1, \dots, n\}$,
+      $T[i,i]$ contains $A$ if there is a rule $A \to w_i$.
+      \item \textbf{Recursive Step ($j > i$):}
+      $T[i,j]$ contains $A$ if there exists
+      a rule $A \to BC$ and a split point $k$ ($i \le k < j$)
+      such that $B \in T[i,k]$ and $C \in T[k+1, j]$.
+  \end{enumerate}
+  The string is accepted if starting symbol $S \in T[1,n]$.
+\end{definition}
 
-The Grammar $\mathcal{A}$ PCFG is defined as a tuple $G = (V, \Sigma, R, S, P)$, where:
+\begin{example}
+  The \autoref{tab:cyk_triangular} illustrates a 
+  CYK Table construction to 
+  verify the acceptance of the string $w = \text{``()()"}$
+  using the CNF grammar derived in \autoref{ex:cnf_conversion}.
+  %
+  The top-right cell $T[1,4]$ represents the 
+  entire string
+  %
+  It contains the Start symbol $B$ (Balanced)
+  because there is a rule `$Balanced \to Pair\,Balanced$'
+  for a split point $k=2$ where $Pair\in T[1,2]$ and $Balanced\in T[3,4]$.
+  
+  Similarly, the cell $T[1,2]$ contains $P$ (Pair) because
+  there is a rule $Pair \to L\, R$
+  for a split point $k=1$ ($L\in T[1,1]$ and $R\in T[2,2]$).
 
-\begin{itemize}
-    \item $V$ is a finite set of non-terminal symbols.
-    \item $\Sigma$ is a finite set of terminal symbols (the alphabet).
-    \item $R$ is a finite set of production rules.
-    \item $S \in V$ is the start symbol.
-    \item $P: R \to [0, 1]$ is a probability function such that for each
-$A \in V$, $\sum_{A \to \alpha \in R} P(A \to \alpha) = 1$.
-\end{itemize}
+  \begin{table}[h]
+    \centering
+    \renewcommand{\arraystretch}{1.5}
+    \begin{tabular}{|c|c|c|c|}
+    \hline
+    $w_1=`('\,\{L\}$ & $\{B,P\}$ & $\emptyset$ & $\mathbf{\{B\}}$ \\ \cline{1-4}
 
-The Rejected WordLet $w = \sigma_1\sigma_2...\sigma_n$
-be a string in $\Sigma^*$.We say $w$ is rejected if $w \notin L(G)$, where $L(G)$
-is the language generated by the grammar.
+    \multicolumn{1}{c|}{} & $w_2=`)'$ \{R\} & $\emptyset$ & $\emptyset$ \\ \cline{2-4}
 
+    \multicolumn{1}{c}{} & \multicolumn{1}{c|}{} & $w_3=`('$ \{L\} & \{B,P\} \\ \cline{3-4}
 
-\textbf{Definition:} Contrastive Set. For a rejected word $w$ of length $n$,
-a set of indices $I \subseteq \{1, \dots, n\}$ is a Contrastive Explanation if:
+    \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c|}{} & $w_4=`)'$ \{R\} \\ \cline{4-4}
 
-\begin{itemize}
-    \item Feasibility: There exists a word $w' \in L(G)$
-    such that $w$ and $w'$ differ only at indices $i \in I$.
-    Formally, $\forall j \notin I, \sigma_j = \sigma'_j$.
-    \item Minimality: No proper subset $I' \subset I$ satisfies the feasibility condition.
-\end{itemize}
+    \end{tabular}
+    \caption{CYK Table for $w=\text{()()}$. 
+    The cells $T[i,j]$ correspond to the substring starting at $i$ and ending at $j$.
+    The diagonal elements contain the input terminals and unary rules able to generate them.
+    \textbf{Abbreviations:} $B$ = Balanced, $P$ = Pair}
+    \label{tab:cyk_triangular}
+  \end{table}
+\end{example}
 
-\textbf{Example:} For $w = ( )))$, the index set $I = \{2\}$ is a contrastive explanation
-because changing index 2 to $)$ results in $w' = ( ( )) \in L(G)$, and the empty set
-$\emptyset$ is not feasible.
-
-
-
-\textbf{Introducing Probabilistic Preference}. In a PCFG, not all accepted words $w'$ are equal.
-We can rank explanations by the likelihood of the correction they enable.
-
-\textbf{The Scoring Function} 
-% For any word $w' \in L(G)$, the probability $P(w')$ is the sum
-% of the probabilities of all possible parse trees for
-% $w'$.
-For any word $w' \in L(G)$, the score $P(w')$ is the maximum probability
-among all possible parse trees $T$ that yield $w'$ (Viterbi Algorithm):
-$$P(w') = \max_{T \in \text{Trees}(w')} P(T)$$
-\textbf{Optimal Contrastive Explanation} Given a rejected word $w$,
-an explanation $I_1$ is probabilistically superior to $I_2$ if the best
-correction enabled by $I_1$ is more likely than that of $I_2$.
-We define the Explanation Weight as:
-$$\text{Weight}(I) = \max \{ P(w') \mid w' \text{ matches } w \text{ except at indices } I, w' \in L(G) \}$$
-
-
-\textbf{The Extended CYK Table}
-
-Standard CYK populates a 3D table $T[i, j, A]$, representing the maximum probability
-that non-terminal $A$ derives the substring from index $i$ to $j$.
-
-For a word $w = \sigma_1\sigma_2...\sigma_n$ and an index set $I$:
-
-\begin{itemize}
-    \item \textbf{Base Case (Length 1)}
-    For each position $i \in \{1, \dots, n\}$ and each non-terminal $A$:    
-    \begin{itemize}
-        \item If $i \notin I$ (Fixed):
-        $$T[i, i, A] = P(A \to \sigma_i)$$
-        (If no such rule exists, the probability is 0).
-        \item If $i \in I$ (in cxp):
-        $$T[i, i, A] = \sum_{\sigma \in \Sigma}  P(A \to \sigma) $$
-        This selects the most likely terminal that $A$ can produce at that ``broken" index.
-    \end{itemize}
-    \item \textbf{Recursive Step (Length $l > 1$)}
-    For each length $l$ from 2 to $n$, each starting position $i$ from 1 to $n-l+1$, and each non-terminal $A$:$$T[i, l, A] = \max_{A \to BC \in R} \left( \max_{1 \le k < l} \{ P(A \to BC) \cdot T[i, k, B] \cdot T[i+k, l-k, C] \} \right)$$
-\end{itemize}
-
-\textbf{Heatmap for Contrastive Explanations}
-
-
-\textbf{Theorem}: Given a word $w=\sigma_1\sigma_1\dots \sigma_n$, and grammar $G$, such that $w \notin L(G)$.
-Let $\mathcal{E}$ be the set of all contrastive explanations for $w$.
-If $H$ is a hitting set of all contrastive explanations $\mathcal{E}$,
-then no word $w'$ that keeps the indices in $H$ fixed to their original values in $w$
-can be accepted by the grammar.
-Mathematically:
-
-If $\forall i \in H, \sigma'_i = \sigma_i$, then $w' \notin L(G)$.
-
-Proof by Contradiction
-
-\textbf{Step 1:} Assume the negation. Assume there exists a word 
-$w' \in L(G)$ such that $w'$ agrees with the original rejected
-word $w$ on all indices in the hitting set $H$.
-$$\forall i \in H: \sigma'_i = \sigma_i$$
-
-\textbf{Step 2:} Let $J$ be the set of indices where
-$w'$ differs from $w$ ($J \cap H = \emptyset$).
-$$J = \{ j \mid \sigma'_j \neq \sigma_j \}$$
-
-\textbf{Step 3:} Relate to Contrastive Explanations.
-
-Since $w' \in L(G)$ and it was formed by changing indices $J$ in $w$,
-then by definition, $J$ is a "feasible" contrastive set.
-It must either be a minimal contrastive
-explanation or a superset of one.
-$$\exists I \in \mathcal{E} \text{ such that } I \subseteq J$$
-
-\textbf{Step 4:} The Contradiction.
-
-We know from Step 2 that $J \cap H = \emptyset$.
-Since $I \subseteq J$, it follows that $I \cap H = \emptyset$.
-However, by definition, $H$ is a hitting set of $\mathcal{E}$,
-meaning it must have a non-empty intersection with every
-$I \in \mathcal{E}$.
-$$H \cap I \neq \emptyset \quad (\text{Contradiction})$$
-
-\textbf{Conclusion:} Our assumption that an accepted word $w'$ exists is false.
-Therefore, the indices in $H$ effectively ``block" all possible paths to acceptance.
-They are the necessary components of the error.
-
-\begin{align*}
-0.8 & \quad VP \to V \ NP   & 1   & \quad NP \to Det \ N & 0.1 & \quad N \to N \ PP   & 1 & \quad Det \to \text{the} & 0.6 & \quad N \to \text{man} \\
-0.2 & \quad VP \to VP \ PP & 1   & \quad PP \to P \ NP  & 1   & \quad V \to \text{sees} & 1 & \quad P \to \text{with}   & 0.3 & \quad N \to \text{telescope}
-\end{align*}
-
-% \begin{forest}
-% [VP
-%   [VP
-%     [V [sees]]
-%     [NP
-%       [Det [the]]
-%       [N [man]]
-%     ]
-%   ]
-%   [PP
-%     [P [with]]
-%     [NP
-%       [Det [the]]
-%       [N [telescope]]
-%     ]
-%   ]
-% ]
-% \end{forest}
-
-% \begin{forest}
-% [VP
-%   [V [sees]]
-%   [NP
-%     [Det [the]]
-%     [N
-%       [N [man]]
-%       [PP
-%         [P [with]]
-%         [NP
-%           [Det [the]]
-%           [N [telescope]]
-%         ]
-%       ]
-%     ]
-%   ]
-% ]
-% \end{forest}
-
-\begin{forest}
-  for tree={
-    s sep=45pt,
-    l sep=25pt,
-  }
-[VP, label=right:{\textbf{0.2}}
-  [VP, label=left:{\textbf{0.8}}
-    [V, label=left:{\textbf{1.0}} [sees]]
-    [NP, label=right:{\textbf{1.0}}
-      [Det, label=left:{\textbf{1.0}} [the]]
-      [N, label=right:{\textbf{0.6}} [man]]
-    ]
-  ]
-  [PP, label=right:{\textbf{1.0}}
-    [P, label=left:{\textbf{1.0}} [with]]
-    [NP, label=right:{\textbf{1.0}}
-      [Det, label=left:{\textbf{1.0}} [the]]
-      [N, label=right:{\textbf{0.3}} [telescope]]
-    ]
-  ]
-]
-\end{forest}
-
-P(t1) = 0.6 * 0.8 * 0.2 * 0.3 = 0.0288
-
-\begin{forest}
-  for tree={
-    s sep=45pt,
-    l sep=25pt,
-  }
-[VP, label=left:{\textbf{0.8}}
-  [V, label=left:{\textbf{1.0}} [sees]]
-  [NP, label=right:{\textbf{1.0}}
-    [Det, label=left:{\textbf{1.0}} [the]]
-    [N, label=right:{\textbf{0.1}}
-      [N, label=left:{\textbf{0.6}} [man]]
-      [PP, label=right:{\textbf{1.0}}
-        [P, label=left:{\textbf{1.0}} [with]]
-        [NP, label=right:{\textbf{1.0}}
-          [Det, label=left:{\textbf{1.0}} [the]]
-          [N, label=right:{\textbf{0.3}} [telescope]]
-        ]
-      ]
-    ]
-  ]
-]
-\end{forest}
-
-P(t2) = 0.6 * 0.8 * 0.1 * 0.3 = 0.0144
-
-p(VP,sees the man with the telescope) = 0.0288 + 0.0144 = 0.0432
-
-If ``telescope'' were ``man''
-
-P(t3) = 0.6 * 0.8 * 0.2 * 0.6 = 0.0576
-
-P(t4) = 0.6 * 0.8 * 0.1 * 0.6 = 0.0288
-
-sees the man with the ? = P(t1) + P(t2) + P(t3) + P(t4) = 0.1296
-
-
-
-Given the grammar $G$ and the rejected word 
-$w=\sigma_1\sigma_2\dots \sigma_n\not\in L(G)$.
-Let $\mathcal{E} = \{I_1, I_2, \dots, I_k\}$ the collection of all 
-Minimal Contrastive Explanations 
-
-Each $I \in \mathcal{E}$: ``The error happened exactly in the set of index $I$''.
-and $P(I)$ Is the sum up of probabilities of all possible trees that 
-derivates accepted words $w'=\sigma'_1\sigma'_2\dots \sigma'_n$
-where $\forall_{i\not\in I} \sigma'_i=\sigma_i$
-
-$P(A)$: Probability to get an accepted Tree with a minimal cxp.
-Every tree is disjoint.
-$P(A) = P(I_1) + P(I_2) + \dots + P(I_k)$
-
-$$P(I \mid A) = \frac{P(I)}{\sum_{J \in \mathcal{E}} P(J)}$$
-
-$$P(\text{Error in } i \mid A) = \sum_{I \in \mathcal{E}} P(\text{Error in } i \mid I, A) P(I \mid A)$$
-
-$$P(\text{Error in } i \mid I, A) = \mathbb{F}(i \in I) = \begin{cases} 1 & \text{if } i \in I \\ 0 & \text{if } i \notin I \end{cases}$$
-
-\section{Future Work and Timeline to Completion}
-
-
-% \begin{figure}[tbp]
-%     \begin{center}
-    
-%     \begin{ganttchart}[expand chart=\textwidth,
-%     hgrid,
-%     vgrid,
-%     x unit=0.8cm,
-%     y unit chart=0.7cm,
-%     time slot format=simple,
-%     title label font=\bfseries\small,
-%     group label font=\bfseries\small,
-%     bar label font=\small,
-%     milestone label font=\small\itshape]{1}{12}
-%     %labels
-%     \gantttitle{2026 (Year 2)}{4} 
-%     \gantttitle{2027 (Year 3)}{4} 
-%     \gantttitle{2028 (Final)}{4} \\
-%     \gantttitlelist{1,...,12}{1} \\
-%     % Phase 1: Theoretical Work
-%     \ganttgroup{Theoretical Refinement}{1}{3} \\
-%     \ganttbar{Formal Logic for Dynamic Env}{1}{2} \\
-%     \ganttmilestone{Framework Finalization}{3} \\
-%     % Phase 2: System Development
-%     \ganttgroup{System Implementation}{4}{7} \\
-%     \ganttbar{Explainer Algorithm Dev}{4}{6} \\
-%     \ganttbar{Simulator Integration}{6}{7} \\
-%     % Phase 3: Validation
-%     \ganttgroup{Validation \& Testing}{8}{10} \\
-%     \ganttbar{Case Study: Autonomous Agents}{8}{9} \\
-%     \ganttbar{Comparative Analysis}{9}{10} \\
-%     % Phase 4: Thesis
-%     \ganttgroup{Thesis Completion}{10}{12} \\
-%     \ganttbar{Final Drafting}{10}{11} \\
-%     \ganttmilestone{Thesis Submission}{12}
-    
-
-%     \end{ganttchart}
-%     \end{center}
-%     \caption{Gantt Chart}
-
-% \end{figure}
