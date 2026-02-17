@@ -139,74 +139,13 @@ these minimal set of edits (Contrastive Explanations).
 
 \section{Preliminaries} 
 
-\textbf{Context-Free Grammars and Pushdown Automata}
+\textbf{Pushdown Automata and Context-Free Grammars}
 
 To provide a foundation for the proposed explanation
 extraction methods, 
 standard definitions and notations
-for Context-Free Grammar and Pushdown Automata are adopted
+for Pushdown Automata and Context-Free Grammar are adopted
 \cite{IntroAutomataTheory,HandbookTheoreticalContextFreeGrammar}.
-
-\begin{definition}[Context-Free Grammar]
-  A Context-Free Grammar (CFG)
-  is defined as a 4-tuple $G=(V,\Sigma ,R,S)$, where:
-  \begin{itemize}
-    \item V (Variables/Non-terminals) is a finite set of variables (non-terminal symbols).
-    \item $\Sigma$ (Terminals) is a finite set of terminal symbols, disjoint from V.
-    \item R is a finite set of production rules of the
-    form $A \rightarrow \alpha$, where $A\in V$ describes
-    a variable and $\alpha\in(V \cup\Sigma)^*$ is a string
-    of variables and terminals.
-    \item $S\in V$ is the start variable.
-  \end{itemize}
-\end{definition}
-%
-The following CFG that generates the
-language of balanced parentheses
-(a subset of the Dyck language)
-%
-\footnote{
-  The Dyck language describes a set of strings
-  with balanced and properly
-  nested brackets (e.g., (), [], \{\})
-  %
-  \cite{HandbookTheoreticalContextFreeGrammar}.
-  The example focuses solely on non-empty
-  sequences of balanced ( and ).
-}
-%
-and is used throughout the document
-to illustrate the proposed ideas.
-%
-
-\begin{example}
-  \label{ex:grammar_balanced}
-  Let $G=(\{Balanced\}, \{(,)\}, R, Balanced)$ be the grammar
-  defined by the following 
-  production rules $R$:
-  %
-  \begin{equation}
-  \begin{aligned}
-      Balanced &\to ( \, Balanced \, ) \, Balanced & \text{(Rule 1)}\\
-      Balanced &\to ( \, Balanced \, ) & \text{(Rule 2)}\\
-      Balanced &\to ( \, ) \, Balanced & \text{(Rule 3)}\\
-      Balanced &\to ( \, ) & \text{(Rule 4)}
-  \end{aligned}
-  \end{equation}
-  %
-  This grammar generates the language of
-  properly nested parentheses.
-  For instance, the string ``()()''
-  can be derivated as follows.
-  %
-  \begin{equation}
-  \begin{aligned}
-      Balanced &\Rightarrow ( \, ) \, \mathbf{Balanced}  && \text{(Rule 3: parentheses and Balanced)} \\
-               &\Rightarrow ( \, ) \, ( \, ) && \text{(Rule 4: Reduce final `Balanced' to `()')}
-  \end{aligned}
-  \end{equation}
-\end{example}
-
 
 \begin{definition}[Pushdown Automaton]
   A Pushdown Automaton (PDA) extends the capabilities of a
@@ -278,19 +217,28 @@ to illustrate the proposed ideas.
   is the set of all accepted words, denoted as $L(\mathcal{A})$.
   %
 \end{definition}
+
+The following PDA recognizes the
+language of balanced parentheses
+(a subset of the Dyck language)
 %
-A fundamental equivalence between CFGs and PDAs:
-a language $L$ is context-free iff there exists a
-PDA $\mathcal{A}$ such that $L(\mathcal{A})=L$
-\cite{HandbookTheoreticalContextFreeGrammar, IntroAutomataTheory}.
+\footnote{
+  The Dyck language describes a set of strings
+  with balanced and properly
+  nested brackets (e.g., (), [], \{\})
+  %
+  \cite{HandbookTheoreticalContextFreeGrammar}.
+  The example focuses solely on non-empty
+  sequences of balanced ( and ).
+}
 %
-This equivalence allows us to use grammar-based
-parsing algorithms, such as CYK, to analyze the
-behavior of PDAs.
+and is used throughout the document
+to illustrate the proposed ideas.
+%
 
 \begin{figure}[h]
   \centering
-    \input{/Users/jcua0001/Documents/Monash-Thesis-Template-Latex-main/Figures/PDA/parenthesis_PDA.tex}
+    \input{Figures/PDA/parenthesis_PDA.tex}
     \caption{A Pushdown Automaton $\mathcal{A}$
     accepting the language of balanced parentheses.
     The symbol \$ is used as the bottom-of-stack marker.}
@@ -320,8 +268,9 @@ behavior of PDAs.
       \end{enumerate}
   \end{itemize}
 
-  \autoref{fig:pda_example} is the state diagram that illustrates this PDA.
-
+  \autoref{fig:pda_example} illustrates this PDA.
+  The configuration history of $\mathcal{A}$ for the input ``()()'' is:
+%
   \begin{equation}
     \begin{aligned}
         & (q_0, \text{()()}, \epsilon) \\
@@ -336,6 +285,60 @@ behavior of PDAs.
     \end{aligned}
   \end{equation}
 \end{example}
+
+\begin{definition}[Context-Free Grammar]
+  A Context-Free Grammar (CFG)
+  is defined as a 4-tuple $G=(V,\Sigma ,R,S)$, where:
+  \begin{itemize}
+    \item V (Variables/Non-terminals) is a finite set of variables (non-terminal symbols).
+    \item $\Sigma$ (Terminals) is a finite set of terminal symbols, disjoint from V.
+    \item R is a finite set of production rules of the
+    form $A \rightarrow \alpha$, where $A\in V$ describes
+    a variable and $\alpha\in(V \cup\Sigma)^*$ is a string
+    of variables and terminals.
+    \item $S\in V$ is the start variable.
+  \end{itemize}
+\end{definition}
+%
+
+A fundamental equivalence between CFGs and PDAs:
+a language $L$ is context-free iff there exists a
+PDA $\mathcal{A}$ such that $L(\mathcal{A})=L$
+\cite{HandbookTheoreticalContextFreeGrammar, IntroAutomataTheory}.
+%
+This equivalence allows us to use grammar-based
+parsing algorithms, such as CYK, to analyze the
+behavior of PDAs.
+
+\begin{example}
+  \label{ex:grammar_balanced}
+  Let $G=(\{Balanced\}, \{(,)\}, R, Balanced)$ be the grammar
+  defined by the following 
+  production rules $R$:
+  %
+  \begin{equation}
+  \begin{aligned}
+      Balanced &\to ( \, Balanced \, ) \, Balanced & \text{(Rule 1)}\\
+      Balanced &\to ( \, Balanced \, ) & \text{(Rule 2)}\\
+      Balanced &\to ( \, ) \, Balanced & \text{(Rule 3)}\\
+      Balanced &\to ( \, ) & \text{(Rule 4)}
+  \end{aligned}
+  \end{equation}
+  %
+  This grammar generates the language of
+  properly nested parentheses.
+  For instance, the string ``()()''
+  can be derivated as follows.
+  %
+  \begin{equation}
+  \begin{aligned}
+      Balanced &\Rightarrow ( \, ) \, \mathbf{Balanced}  && \text{(Rule 3: parentheses and Balanced)} \\
+               &\Rightarrow ( \, ) \, ( \, ) && \text{(Rule 4: Reduce final `Balanced' to `()')}
+  \end{aligned}
+  \end{equation}
+\end{example}
+
+
 
 
 \textbf{Transition to Explainability for Pushdown Automata decisions}
