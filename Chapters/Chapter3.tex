@@ -454,3 +454,116 @@ the substring of $w$ starting at $i$ and ending at $j$.
   \end{table}
 \end{example}
 
+
+\subsection{Classification Problems and Formal Explanations}
+
+Following~\cite{delivering_trust,darwiche2023logic}, we assume
+classification problems to be defined on a set $\mathcal{F}$ of $m$
+features and a set $\mathcal{K}$ of $k$ classes.
+%
+Each feature $i\in\mathcal{F}$ is in some domain $\mathbb{D}_i$ while
+the feature space is $\mathbb{F}=\prod_{i=1}^{m} \mathbb{D}_i$. A
+classifier is assumed to compute a total function $\kappa:
+\mathbb{F}\rightarrow \mathcal{K}$.
+
+Next, we assume an instance $\mathbf{v}\in\mathbb{F}$ such that
+$\kappa(\mathbf{v})=~c\in~\mathcal{K}$.
+%
+We are interested in explaining why $\mathbf{v}$ is classified as
+class $c$.
+%
+Given an instance $\mathbf{v}\in\mathbb{F}$ such that
+$\kappa(\mathbf{v})=c\in\mathcal{K}$, an \emph{abductive explanation}
+(AXp) $\mathcal{X}\subseteq \mathcal{F}$ is a minimal subset of
+features \emph{sufficient} for the prediction.
+%
+Formally, $\mathcal{X}$ is defined as:
+%
+\begin{equation}
+    %
+    \label{eq:axp}
+    %
+    \forall (\textbf{x}\in \mathbb{F}). \left[\bigwedge\nolimits_{i
+    \in \mathcal{X}} (x_i=v_i)\right]\rightarrow
+    \left(\kappa(\mathbf{x})=c\right)
+    %
+\end{equation}
+
+Similarly, one can define another kind of explanation.
+%
+Namely, given an instance $\mathbf{v}\in\mathbb{F}$ such that
+$\kappa(\mathbf{v})=c$, a \emph{contrastive explanation} (CXp) is a
+minimal subset of features $\mathcal{Y}\subseteq\mathcal{F}$
+that, if allowed to change, enables the prediction's alteration.
+%
+Formally, a contrastive explanation $\mathcal{Y}$ is defined as follows:
+%
+\begin{equation}
+    %
+    \label{eq:cxp}
+    %
+    \exists (\textbf{x}\in \mathbb{F}). \left[\bigwedge\nolimits_{j
+    \not\in \mathcal{Y}} (x_j=v_j)\right] \land
+    \left(\kappa(\mathbf{x}) \neq c\right)
+    %
+\end{equation}
+%
+Observe that abductive explanations are used to explain \emph{why} a
+prediction is made by the classifier $\kappa$ for a given instance while
+contrastive explanations can be seen to answer \emph{why not} another
+prediction is made by $\kappa$.
+%
+Alternatively, CXps can be seen as answering \emph{how} the
+predication can be changed.
+
+Importantly, abductive and contrastive explanations are known to enjoy
+a minimal hitting set duality relationship~\cite{axpcxp}.
+%
+Given $\kappa(\mathbf{v})=~c$, let $\mathbb{A}_\mathbf{v}$ be the
+complete set of AXps and $\mathbb{C}_\mathbf{v}$ be the complete set
+of CXps for this prediction.
+%
+Then each AXp $\mathcal{X}\in\mathbb{A}_\mathbf{v}$ is a minimal
+hitting set of $\mathbb{C}_\mathbf{v}$ and, vice versa, each CXp
+$\mathcal{Y}\in\mathbb{C}_\mathbf{v}$ is a minimal hitting set of
+$\mathbb{A}_\mathbf{v}$.\footnote{Given a collection of sets
+$\mathbb{S}$, a \emph{hitting set} of $\mathbb{S}$ is a set $H$ such
+that for each $S \in \mathbb{S}$, $H \cap S \neq \emptyset$. A
+hitting set is \emph{minimal} if no proper subset of it is a
+hitting set.}
+%
+This fact is the basis for the algorithms used for formal explanation
+\emph{enumeration}~\cite{delivering_trust,ffa}.
+% , including those presented in this work.
+
+%\pjs{Consider ommitting FFA altogether!}
+
+A challenge arising in formal XAI
+is given there are many AXps or CXps,
+which is the \emph{best} explanation to present to a user.
+An obvious answer is to use one of minimal size,
+but an alternate answer is to
+generate a result that records the
+influence of all explanations.
+A \emph{formal feature attribution} (FFA)
+weighs the importance of each
+feature \cite{ffa,yu-sat24} in determining the result that $\kappa(\mathbf{v}) = c$.
+We define the formal feature attribution of feature $i$ as
+\begin{equation}
+    %
+    \label{eq:ffa_definition}
+    %
+    \mathsf{FFA}{\mathbf{v}}(i) = \frac{ |\{ {\cal X} ~|~ {\cal X} \in \mathbb{A}_{\mathbf{v}}, i \in {\cal X} \}|
+}{|\mathbb{A}_{\mathbf{v}}|}
+    %
+\end{equation}
+The proportion of all AXps shows the
+contribution of each feature to the decision.
+A \emph{formal feature attribution} for $\kappa(\mathbf{v}) = c$ is the set
+$\{ (i, \mathsf{FFA}{\mathbf{v}}(i)) ~|~ i \in
+{\cal F}, \mathsf{FFA}{\mathbf{v}}(i)) > 0 \}$.
+
+Critically, formal feature attribution gives an \emph{unbiased} measure of
+the influence of input features on the decision.
+
+\section{Explaining Pushdown Automata decisions}
