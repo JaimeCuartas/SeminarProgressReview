@@ -1,0 +1,16 @@
+\begin{tikzpicture}[
+    level distance=10mm,
+    level/.style={sibling distance=22mm/#1}]
+  \node {B}
+    child {node {Nested}
+      child {node {Unclosed}
+        child {node {L} child {node {(}}}
+        child {node {B} child {node {L} child {node {(}}} child {node {R} child {node {)}}} }
+      }
+      child {node {R} child {node {)}}}
+    }
+    child {node {B}
+      child {node {L} child {node {(}}}
+      child {node {R} child {node {)}}}
+    };
+\end{tikzpicture}

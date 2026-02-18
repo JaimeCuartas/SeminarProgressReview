@@ -9,27 +9,51 @@ that provide rigorous guarantees about the explanations generated
 \cite{logic_based_exp, darwiche2023logic}.
 
 A fundamental challenge in dynamic environments is
-explaining sequential decision-making, To address this, 
+explaining sequential decision-making.
+%
+To address this, 
 we model these processes using Automata, which provide a
 symbolic and tractable representation of sequential decision
-functions. This approach allows us to generate formal explanations,
+functions.
+%
+This approach allows us to generate formal explanations,
 why a specific sequence of actions leads to a particular outcome. 
 Automata are widely used in software verification 
 \cite{PrinciplesModelChecking}, design of communication protocols
 \cite{SPINModelChecker},and sintax parsing in compiler \cite{DragonBook}.
 When a computational model, such as a Finite Automaton (FA) or a
 Pushdown Automaton (PDA), accepts or rejects an input string,
-the reasoning behind that decision can be non-trivial. 
+the reasoning behind that decision can be non-trivial.
+%
 Understanding why a specific input was accepted or rejected
 is crucial for debugging, and refinement purposes.
 
 This research project investigates the formalization 
 of explanations for sequential decision-making. 
+%
 Having addressed an approach to deliver formal explanations
 for Finite Automata (FA) in the first stage of this research,
-and submitting it to a ICALP 2026. I now move to address
+and submitting it to a ICALP 2026.
+%
+I now move to address
 explanations for Context-Free Languages (CFG) /
 Pushdown Automata (PDA) decisions.
+
+Current literature focuses on the
+\textit{performance} of parsing rather than the
+\textit{interpretability} of the decision.
+%
+Modern parsing algorithms,
+such as Tree-sitter \cite{tree_sitter}
+and ANTLR 4 \cite{antlr},
+utilise sophisticated incremental parsing and adaptive LL(*)
+algorithms to ensure low-latency feedback for
+integrated development environments (IDEs).
+%
+While these methods are efficient at error recovery,
+often scaling linearly with input size, they treat the
+decision process as the main objective.
+
 
 \section{Refined scope - problem statement}
 
@@ -37,48 +61,64 @@ While standard XAI focuses on feature
 attribution in classifiers, the "features"
 in formal languages are sequential and
 structural.
+%
 Since the confirmation report, the
 research scope has been refined to
 address three primary gaps:
 
-\begin{itemize} 
-    \item \textbf{Research Problem 1 (Completed): Explaining Finite Automata.} 
-    Finite Automata are often assumed to be interpretable. However,
-    large FA are cognitively inaccessible to humans.
-    I have developed a framework to compute formal
-    explanations for the acceptance and rejection of
-    inputs in FA, providing a rigorous foundation for
-    automaton-based explainability.
-
-    \item \textbf{Research Problem 2: Explaining Pushdown Automata (PDA).} 
-    Context-free languages, recognized by PDAs, introduce a stack-based memory
-    that allows to represent more complex behaviors.
-    %A single character's "badness" may depend on a token seen much earlier in the stream.
-    My objective is the generation of 
-    Minimal Contrastive Explanations (CXPs)
-    the minimal sets of modifications required
-    to turn a rejected word into an accepted one;
+\begin{itemize}
     %
-    and Minimal Abductive Explanations (AXps)
-    the minimal sets of tokens such that
-    the word is going to be rejected.
-
-    Finally,
-    there is a lack of quantitative metrics that
-    assign a Feature Attribution Score
-    (``degree of responsibility'') to
-    specific indices in a rejected string.
-    % The third problem focuses on the development of the Features Attribution Score (RAS),
-    % using constrained optimization (Non-Negative Least Squares) to provide a probabilistic
-    % ranking of which tokens most significantly contribute to a structural rejection.
-
+    \item \textbf{Research Problem 1 (Completed): Explaining Finite Automata.} 
+    How can we provide Formal Explanations 
+    for Finite Automata decisions?
+    %
+    \begin{itemize}
+        %
+        \item To Define Formal explanations for
+        understanding the acceptance/rejection of
+        inputs in Finite Automata
+        %
+        \item To develop a method to compute
+        Formal Explanations for Finite Automata
+        %
+    \end{itemize}
+    %
+    \item \textbf{Research Problem 2: Explaining Pushdown Automata (PDA).}
+    %
+    How can we provide Formal Explanations
+    for Pushdown Automata decisions?
+    %
+    \begin{itemize}
+        %
+        \item To Define Formal explanations for
+        understanding the acceptance/rejection of
+        inputs in Pushdown Automata.
+        %
+        \item To develop a method to compute
+        Formal Explanations for Pushdown Automata.
+        %
+        \item To propose a method to identify
+        the most significant or ``most likely''
+        explanations among explanations.
+        %
+    \end{itemize}
+    %
     \item \textbf{Research Problem 3: Explaining Decisions of Sthocastic models.} 
-    How can the Feature Attribution Score
-    be extended to explain outcomes
-    for policies in sthocastic environments?
-    This problem explores sequential decision-making,
-    where actions influence future states under
-    uncertain contexts.
+    %
+    \begin{itemize}
+        %
+        \item To Define Formal explanations for understanding
+        the probable outcomes in Stochastic Models.
+        %
+        \item To develop a method to compute Formal Explanations
+        for Stochastic Models
+        (e.g., Probabilistic Finite Automata or Markov Models).
+        %
+        \item To propose a method to identify
+        the most significant or ``most likely''
+        explanations among probabilistic paths.
+        %
+    \end{itemize}
 \end{itemize}
 
 
@@ -89,7 +129,7 @@ contributions to the field of Computer Science:
 
 \emph{Achieved Contributions}:
 \begin{itemize}
-    \item Development of an theoretical and practical approach
+    \item Development of a theoretical and practical approach
     to explain Finite Automata decisions.
     \item A paper submitted to ICALP 2026 tittled
     ``A Formal Framework for the Explanation of Finite Automata Decisions''
@@ -98,12 +138,18 @@ contributions to the field of Computer Science:
 \emph{Projected Contributions}:
 \begin{itemize}
     \item Explaining Pushdown Automata decisions: (In Progress)
-    Extending the formal explanation framework to PDAs, which recognize context-free languages.
-    This involves developing algorithms to identify the minimal contrastive explanations (CXPs)
-    and Abductive Explanations (AXPs), and quantifying the contribution
+    Extending the formal explanation framework to PDAs,
+    which recognize context-free languages.
+    %
+    This involves developing algorithms to identify the
+    minimal contrastive explanations (CXPs)
+    and Abductive Explanations (AXPs),
+    and quantifying the contribution
     of specific tokens to the decision (acceptance or rejection).
+    %
     \item Explaining Decisions of Sthocastic models:
-    Extending the formal explanation framework to Markov Decision Processes (MDPs).
+    Extending the formal explanation framework to Stochastic Models.
+    %
     The goal is to provide verifiable explanations able to
     identify the environmental factors
     or decision points that lead to a particular outcomes.
