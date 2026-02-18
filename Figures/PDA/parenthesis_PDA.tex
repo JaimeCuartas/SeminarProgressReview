@@ -4,23 +4,16 @@
     \node[state, accepting] (q_2) [right=of q_1] {$q_{f}$};
 
     \path[->]
-    % Initialization: Push bottom marker $ and Start Symbol B
     (q_0) edge node {$\epsilon, \epsilon \to B\,\$$} (q_1)
-
-    % The Main Loop: Expand Non-Terminals & Match Terminals
     (q_1) edge [loop above] node {
-            \begin{tabular}{r c l}
-            % Expansions (matching Grammar Rules)
-            $\epsilon, B$ & $\to$ & $(\,B\,)\,B$ \\
-            $\epsilon, B$ & $\to$ & $(\,B\,)$ \\
-            $\epsilon, B$ & $\to$ & $(\,)\,B$ \\
-            $\epsilon, B$ & $\to$ & $(\,)$ \\
-            % Matching (Pop terminal if it matches input)
-            $(, ($        & $\to$ & $\epsilon$ \\
-            $), )$        & $\to$ & $\epsilon$
-            \end{tabular}
-            } ()
-
-    % Acceptance: Pop bottom marker
-            edge node {$\epsilon, \$ \to \epsilon$} (q_2);
+        \begin{tabular}{r c l}
+        $\epsilon, B$ & $\to$ & \texttt{(} $B$ \texttt{)}\,$B$ \\
+        $\epsilon, B$ & $\to$ & \texttt{(} $B$ \texttt{)} \\
+        $\epsilon, B$ & $\to$ & \texttt{()} $B$ \\
+        $\epsilon, B$ & $\to$ & \texttt{()} \\
+        \texttt{(}, \texttt{(} & $\to$ & $\epsilon$ \\
+        \texttt{)}, \texttt{)} & $\to$ & $\epsilon$
+        \end{tabular}%
+    } ()
+          edge node {$\epsilon, \$ \to \epsilon$} (q_2);
 \end{tikzpicture}
