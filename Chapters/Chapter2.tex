@@ -1,4 +1,4 @@
-\chapter{Formal Explainability}
+\section{Formal Explainability}
 
 In this chapter I present some important concepts of 
 Formal Explainability that are foundational for this work.
@@ -11,14 +11,17 @@ during my first year to explain Finite Automata Decisions.
 
 Following XAI literature for classification problems
 \cite{delivering_trust,darwiche2023logic}, we consider
-a classifier $\kappa~:~\mathbb{F}\rightarrow \mathcal{K}$
+a classifier \newline
+$\kappa~:~\mathbb{F}\rightarrow \mathcal{K}$
 over a feature space $\mathbb{F}=\prod_{i=1}^{m} \mathbb{D}_i$
-and a set of classes K.
+and a set of classes $\mathcal{K}$.
 
 For an instance $\mathbf{v}\in\mathbb{F}$ with prediction
 $\kappa(\mathbf{v})=~c\in~\mathcal{K}$, an
 \emph{abductive explanation} 
-$\mathcal{X}\subseteq \mathcal{F}$ \emph{sufficient} for the prediction.
+is a minimal subset of features
+$\mathcal{X}\subseteq \{1,\dots , m\}$
+\emph{sufficient} for the prediction.
 %
 Formally, $\mathcal{X}$ is defined as:
 %
@@ -33,7 +36,7 @@ Formally, $\mathcal{X}$ is defined as:
 \end{equation}
 %
 Similarly, a \emph{contrastive explanation} (CXp) is a
-minimal subset of features $\mathcal{Y}\subseteq\mathcal{F}$
+minimal subset of features $\mathcal{Y}\subseteq \{1,\dots , m\}$
 that, if allowed to change, enables the prediction's alteration.
 %
 Formally, a contrastive explanation $\mathcal{Y}$ is defined as follows:
@@ -54,7 +57,7 @@ contrastive explanations can be seen to answer \emph{why not} another
 prediction is made by $\kappa$.
 %
 Alternatively, CXps can be seen as answering \emph{how} the
-predication can be changed.
+prediction can be changed.
 
 Importantly, abductive and contrastive explanations are known to enjoy
 a minimal hitting set duality relationship~\cite{axpcxp}.
@@ -77,13 +80,17 @@ This fact is the basis for the algorithms used for formal explanation
 
 \subsection{Explaining Finite Automata Decisions}
 
-Here, we adopted standard definitions and notations for \emph{finite
+Here, we adopt standard definitions and notations for \emph{finite
 automata} and \emph{regular expressions}
 \cite{FA_and_their_decision_problems,FA_languages,PERRIN19901}.
 %
-$\emptyset$ denote the empty language, $c\in \Sigma$
-denotes the language $\{c\}$, and $\Sigma$ the
-language $\{\Sigma\}$, the set of all strings of length 1.
+$\emptyset$ denotes the empty language, $c\in \Sigma$
+denotes the language $\{c\}$, 
+%
+and $\Sigma$ denotes the language containing the
+wildcard character
+(representing any single character),
+the set of all strings of length 1.
 %
 In general, given a regular expression $R$, the language it defines is
 denoted by $L(R)$.
@@ -101,11 +108,11 @@ Similar to classification problems, we propose two types of
 explanations for FA: abductive explanations (AXps) and contrastive
 explanations (CXps).
 %
-Informally, an AXp answers ``why does $\mathcal{A}$ accept/reject
-$w$?''
+Informally, an AXp answers
+``Why does $\mathcal{A}$ accept/reject $w$?''
 %
-a CXp answers ``How can $w$ be modified to alter the response
-of~$\mathcal{A}$?''.
+while a CXp answers
+``How can $w$ be modified to alter the response of $\mathcal{A}$?''.
 %
 
 In that work, we introduced a class of explanation
@@ -160,10 +167,10 @@ in $w$ with $\Sigma$ (representing any character).
   ($L(\Sigma\Sigma\texttt{b}\Sigma\Sigma)\subseteq L(\mathcal{A})$)
   is a correct explanation, as any word of
   length 5 with a \texttt{b} in position 3 will be accepted.
-  Note that once we have one type of explanation, we can easily
-  extract the other type of explanation by Minimal Hitting sets
-  as it is illustrated in \autoref{fig:mhs_explanations_dot}.
-  Note that AXps fix indices while CXps free them and reveals
+  Once we have one type of explanation, we can easily
+  extract the other type of explanation by Minimal Hitting sets,
+  as illustrated in \autoref{fig:mhs_explanations_dot}.
+  Note that AXps fix indices while CXps free them, revealing
   an minimal set where it is possible to flip the prediction
   (get a rejected word).
   %
