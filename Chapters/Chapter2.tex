@@ -34,7 +34,7 @@ be matched by a corresponding `b'.
   %
   Upon encountering a mismatch (e.g., $a^{4}b^{2}$),
   it might reject the sequence, but it lacks the
-  structural context to generate a contrastive
+  the context to generate a contrastive
   explanation such as:
   "The sequence is invalid because the third or fourth `a'
   was not closed by a matching `b'."
@@ -356,7 +356,7 @@ canonical form to ensure predictable execution complexity.
 
 For every CFG $G$ whose languge contains at least one string
 other than $\epsilon$, then there is a grammar $G_1$
-in Chomsky Normal Form.
+in Chomsky Normal Form, such that $L(G_1)=L(G)\setminus\{\epsilon\}$.
 
 \begin{example}
   \label{ex:cnf_conversion}
@@ -422,7 +422,7 @@ the substring of $w$ starting at $i$ and ending at $j$.
   using the CNF grammar derived in \autoref{ex:cnf_conversion}.
   %
   The top-right cell $T[1,4]$ represents the 
-  entire string
+  entire string.
   %
   It contains the Start symbol $B$ (Balanced)
   because there is a rule `$Balanced \to Pair\,Balanced$'
@@ -556,7 +556,17 @@ regular language $\{ r_1 r_2 \mid r_1 \in L(R_1), r_2 \in L(R_2)\}$.
 }
 %
 formed by replacing
-some characters in $w$ by $\Sigma$
+some characters in $w$ by $\Sigma$.
+
+An \textbf{abductive explanation} relative to a word,
+is a set of indices such that
+if they are fixed, the prediction is going to remain
+the same regardless of the other tokens.
+%
+A \textbf{contrastive explanation}
+is a set of indices such that
+if they were free, it would be possible to flip the
+prediction.
 
 Typically, accepted words in Context-Free Languages
 are easy to modify to flip the prediction to \textbf{rejected}.
@@ -681,7 +691,7 @@ to \textit{guarantee} rejection:
 
   \end{tabular}
   \caption{
-    Modified CYK Table verifying $\cxp(\{1,2\}, \texttt{))))})$.
+    Modified CYK Table verifying $\texttt{))))})$.
     %
     Indices 1 and 2 are treated as wildcards ($\Sigma$).
     %
