@@ -158,21 +158,20 @@ in $w$ with $\Sigma$ (representing any character).
   %
   Clearly, reading the first two \texttt{b}'s leads to an accepting
   state, so an explanation could be \texttt{\underline{bb}bbb} 
-  ($L(\texttt{bb}\Sigma\Sigma\Sigma)\subseteq L(\mathcal{A})$)
-  where
-  the underlined characters are those that explain the acceptance.
+  ($L(\texttt{bb}\Sigma\Sigma\Sigma) \subseteq L(\mathcal{A})$),
+  where the underlined characters are those that explain the acceptance.
   %
-  But other (shorter) explanations exist, e.g.
+  However, other (shorter) explanations exist, e.g.
   \texttt{bb\underline{b}bb} 
-  ($L(\Sigma\Sigma\texttt{b}\Sigma\Sigma)\subseteq L(\mathcal{A})$)
+  ($L(\Sigma\Sigma\texttt{b}\Sigma\Sigma) \subseteq L(\mathcal{A})$)
   is a correct explanation, as any word of
   length 5 with a \texttt{b} in position 3 will be accepted.
   Once we have one type of explanation, we can easily
-  extract the other type of explanation by Minimal Hitting sets,
+  extract the other using Minimal Hitting sets,
   as illustrated in \autoref{fig:mhs_explanations_dot}.
-  Note that AXps fix indices while CXps free them, revealing
-  an minimal set where it is possible to flip the prediction
-  (get a rejected word).
+  AXps fix indices while CXps free them, revealing
+  a minimal set where it is possible to flip the prediction
+  (obtain a rejected word).
   %
   \qed
   %
