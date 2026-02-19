@@ -1,10 +1,17 @@
 \chapter{Formal Explainability}
 
+In this chapter I present some important concepts of 
+Formal Explainability that are foundational for this work.
+%
+Two types of explanations widely used in classification
+problems, and a brief illustration of our work developed
+during my first year to explain Finite Automata Decisions.
+
 \subsection{Classification Problems and Formal Explanations}
 
 Following XAI literature for classification problems
 \cite{delivering_trust,darwiche2023logic}, we consider
-a classifier $\kappa:~\mathbb{F}\rightarrow \mathcal{K}$
+a classifier $\kappa~:~\mathbb{F}\rightarrow \mathcal{K}$
 over a feature space $\mathbb{F}=\prod_{i=1}^{m} \mathbb{D}_i$
 and a set of classes K.
 
@@ -67,3 +74,102 @@ hitting set.}
 %
 This fact is the basis for the algorithms used for formal explanation
 \emph{enumeration}~\cite{delivering_trust,ffa}.
+
+\subsection{Explaining Finite Automata Decisions}
+
+Here, we adopted standard definitions and notations for \emph{finite
+automata} and \emph{regular expressions}
+\cite{FA_and_their_decision_problems,FA_languages,PERRIN19901}.
+%
+$\emptyset$ denote the empty language, $c\in \Sigma$
+denotes the language $\{c\}$, and $\Sigma$ the
+language $\{\Sigma\}$, the set of all strings of length 1.
+%
+In general, given a regular expression $R$, the language it defines is
+denoted by $L(R)$.
+%
+The concatenation of two regular expressions $R_1 R_2$ denotes the
+regular language $\{ r_1 r_2 \mid r_1 \in L(R_1), r_2 \in L(R_2)\}$.
+
+
+In this work, we aim to explain the behaviour of a finite automaton
+$\mathcal{A}$ on an input $w\in\Sigma^*$, which can be viewed as a
+classifier mapping input $w$ to a class in ${\cal K} = \{
+\mbox{accept}, \mbox{reject} \}$.
+%
+Similar to classification problems, we propose two types of
+explanations for FA: abductive explanations (AXps) and contrastive
+explanations (CXps).
+%
+Informally, an AXp answers ``why does $\mathcal{A}$ accept/reject
+$w$?''
+%
+a CXp answers ``How can $w$ be modified to alter the response
+of~$\mathcal{A}$?''.
+%
+
+In that work, we introduced a class of explanation
+languages based on regular expressions.
+%
+They are formed by replacing selected characters
+in $w$ with $\Sigma$ (representing any character).
+
+\begin{figure}[b]
+  \centering
+    \input{Figures/fa/fa_example_trace.tex}
+    \caption{
+      Input \texttt{bbbbb} is accepted by this automata.
+      Opaque states indicate transitions that are not traversed
+      for the input \texttt{bbbbb}.
+      Two valid explanations are \texttt{\underline{bb}bbb} and
+      (a shorter one) \texttt{bb\underline{b}bb}.}
+  \label{fig:bbbbb_trace}
+\end{figure}
+
+\begin{figure}[b]
+  \centering
+  \input{Figures/FA/mhs.tex}
+  \caption{
+    Duality between AXps and CXps in $\Sigma$.
+    AXps fix the characters at given indices;
+    CXps free them.
+  }
+  \label{fig:mhs_explanations_dot}
+\end{figure}
+
+\begin{example}\label{ex:bbbbb}
+  %
+  Consider the deterministic FA $\mathcal{A}$
+  shown in Figure~\ref{fig:bbbbb_trace}.
+  %
+  Observe that it accepts the input word \texttt{bbbbb}.
+  %
+  How should we explain this?
+  %
+  One obvious way is to trace the execution of the automaton on the
+  input word.
+  %
+  Clearly, reading the first two \texttt{b}'s leads to an accepting
+  state, so an explanation could be \texttt{\underline{bb}bbb} 
+  ($L(\texttt{bb}\Sigma\Sigma\Sigma)\subseteq L(\mathcal{A})$)
+  where
+  the underlined characters are those that explain the acceptance.
+  %
+  But other (shorter) explanations exist, e.g.
+  \texttt{bb\underline{b}bb} 
+  ($L(\Sigma\Sigma\texttt{b}\Sigma\Sigma)\subseteq L(\mathcal{A})$)
+  is a correct explanation, as any word of
+  length 5 with a \texttt{b} in position 3 will be accepted.
+  Note that once we have one type of explanation, we can easily
+  extract the other type of explanation by Minimal Hitting sets
+  as it is illustrated in \autoref{fig:mhs_explanations_dot}.
+  Note that AXps fix indices while CXps free them and reveals
+  an minimal set where it is possible to flip the prediction
+  (get a rejected word).
+  %
+  \qed
+  %
+\end{example}
+
+Formal definitions and more details about this and other
+languages of explanations are found in Appendix.

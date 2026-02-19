@@ -1,0 +1,47 @@
+\begin{tikzpicture}[
+  >-stealth,
+  thick,
+  axp/.style={fill=black, regular polygon, regular polygon sides=4, inner sep=1pt, minimum size=3pt},
+  cxp/.style={fill=black, regular polygon, regular polygon sides=3, inner sep=1pt, minimum size=3pt},
+  projection/.style={<->, dashed, shorten <=2pt, shorten >=2pt},
+  groupbox/.style={draw, rectangle, rounded corners=4pt, inner sep=2pt}
+]
+  \node at (0,3) {Abductive Explanations};
+  \node at (4.5,3) {Contrastive Explanations};
+
+
+  % Abductive nodes
+  \node[cxp,label=left:3] (axp_3) at (0,2.3) {};
+  \node at (0,1.7) {$L(\Sigma\Sigma\texttt{b} \Sigma\Sigma)$};
+
+  \node[cxp,label=left:1] (axp_1) at (0,0.9) {};
+  \node[cxp,label=left:2] (axp_2) at (0,0.5) {};
+  \node at (0,-0.1) {$L(\texttt{bb} \Sigma\Sigma\Sigma)$};
+
+  % Contrastive nodes
+  \node[axp,label=right:1] (axp1) at (4.5,2.5) {};
+  \node[axp,label=right:3] (axp2) at (4.5,2.1) {};
+  \node at (4.5,1.6) {$L(\Sigma\texttt{b} \Sigma\texttt{bb})$};
+
+  \node[axp,label=right:2] (axq1) at (4.5,0.9) {};
+  \node[axp,label=right:3] (axp4) at (4.5,0.5) {};
+  \node at (4.5,0) {$L(\texttt{b}\Sigma\Sigma\texttt{bb})$};
+
+  % Right padding coordinates for asymmetric extension
+  \node[coordinate] (padR1) at ([xshift=0.4cm]axp1) {};
+  \node[coordinate] (padR2) at ([xshift=0.4cm]axq1) {};
+  \node[coordinate] (padR3) at ([xshift=-0.4cm]axp_3) {};
+  \node[coordinate] (padR4) at ([xshift=-0.4cm]axp_1) {};
+
+  % Group boxes (extend only to the right)
+  \node[groupbox, fit=(axp1)(axp2)(padR1), inner ysep=4pt] {};
+  \node[groupbox, fit=(axq1)(axp4)(padR2), inner ysep=4pt] {};
+  \node[groupbox, fit=(axp_3)(padR3), inner ysep=4pt] {};
+  \node[groupbox, fit=(axp_1)(axp_2)(padR4), inner ysep=4pt] {};
+
+  % Projection arrows
+  \draw[projection] (axp1) -- (axp_3);
+  \draw[projection] (axq1) -- (axp_3);
+  \draw[projection] (axp2) -- (axp_1);
+  \draw[projection] (axp4) -- (axp_2);
+\end{tikzpicture}
