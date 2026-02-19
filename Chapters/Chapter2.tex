@@ -29,8 +29,8 @@ be matched by a corresponding `b'.
   of $b$'s once $n$ exceeds the number
   of states in the machine.
   \item The Explanation Failure:
-  If an FA were used to validate such a sequence,
-  it would process inputs locally.
+  If a PDA were used to validate a sequence,
+  it would process inputs.
   %
   Upon encountering a mismatch (e.g., $a^{4}b^{2}$),
   it might reject the sequence, but it lacks the
@@ -39,7 +39,7 @@ be matched by a corresponding `b'.
   "The sequence is invalid because the third or fourth `a'
   was not closed by a matching `b'."
   Instead, it can only report a
-  "transition failure" at the specific index,
+  ``transition failure'' at the specific index,
   obscuring the root cause of the error.
 
 \end{itemize}
