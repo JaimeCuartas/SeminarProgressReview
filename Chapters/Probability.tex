@@ -5,9 +5,9 @@ it often produces multiple candidates.
 For the rejected word $w=\texttt{))))}$,
 %
 we identified two minimal sets: 
-$\mathcal{CXP}_1=\{1,2\}$ (suggesting $\texttt{(())}$) 
+$\text{CXp}_1=\{1,2\}$ (suggesting $\texttt{(())}$) 
 and 
-$\mathcal{CXP}_2=\{1,3\}$ (suggesting $\texttt{()()}$).
+$\text{CXp}_2=\{1,3\}$ (suggesting $\texttt{()()}$).
 
 A ranking approach is \textit{Feature Attribution},
 which counts the frequency of an index across
@@ -75,27 +75,6 @@ $B \to \text{Unclosed } R$ & 1 & $1/9 = 11.\overline{1}$ \\ \hline
 
 \end{example}
 
-In this probabilistic model, the correction \texttt{()()}
-suggested by $CXP_2$ would likely receive a higher likelihood
-score than the nested structure suggested by $CXP_1$,
-allowing the explainer to present the most helpful
-minimal correction to the user.
-
-\begin{figure}
-\centering
-
-    \begin{minipage}[c]{0.45\linewidth}
-        \input{Figures/PDA/llrr.tex}
-    \end{minipage}
-    \hfill
-    \begin{minipage}[c]{0.45\linewidth}
-        \input{Figures/PDA/lrlr.tex}
-    \end{minipage}
-\caption{Parse trees for words
-\texttt{(())} and \texttt{()()}.}
-\label{fig:trees_dataset}
-\end{figure}
-
 \subsubsection{Ranking Explanations via PCFGs}
 
 To select the best correction, we calculate the probability
@@ -112,14 +91,28 @@ The total probability for valid words of length 4 is:
     P(L_4) = P(\texttt{()()}) + P(\texttt{(())})
 \end{equation}
 
+\begin{figure}[t]
+\centering
+    \begin{minipage}[c]{0.45\linewidth}
+        \input{Figures/PDA/llrr.tex}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[c]{0.45\linewidth}
+        \input{Figures/PDA/lrlr.tex}
+    \end{minipage}
+\caption{Parse trees for words
+\texttt{(())} and \texttt{()()}.}
+\label{fig:trees_dataset}
+\end{figure}
+
 Using the estimated rule probabilities,
 we compute the likelihood of the corrections
 suggested by our CXps (shown in \autoref{fig:trees_dataset}):
 \begin{itemize}
-    \item \textbf{$\mathcal{CXP}_1 \to \texttt{(())}$:} 
+    \item $\text{CXp}_1 \to \texttt{(())}$:
     $P(\texttt{(())}) = \frac{1}{9} \times \frac{4}{9} \approx 0.049$
     %
-    \item \textbf{$\mathcal{CXP}_2 \to \texttt{()()}$:} 
+    \item $\text{CXp}_2 \to \texttt{()()}$:
     $P(\texttt{()()}) = \frac{3}{9} \times \frac{4}{9} \approx 0.148$
 \end{itemize}
 
@@ -131,11 +124,13 @@ a CXp suggesting correction $w'$ as:
 \end{equation}
 %
 \begin{equation*}
-    Score(\mathcal{CXP}_1)= \frac{0.049}{0.148 + 0.049}\approx \mathbf{0.25} \quad \text{vs} \quad Score(\mathcal{CXP}_2) \approx \mathbf{0.75} 
+    Score(\text{CXp}_1)= \frac{0.049}{0.148 + 0.049}\approx \mathbf{0.25} \quad \text{vs} \quad Score(\text{CXp}_2) \approx \mathbf{0.75} 
 \end{equation*}
 %
 Under this PCFG, the correction \texttt{()()}
-is more likely than \texttt{(())}.
+(suggested by $\text{CXp}_2$)
+is more likely than \texttt{(())}
+(suggested by $\text{CXp}_1$).
 %
 This allows the explainer to prioritize
 the most statistically probable fix.

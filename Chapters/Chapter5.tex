@@ -1,0 +1,148 @@
+\chapter{Preliminary Results}
+
+\section{Responsibility Attribution for Token Substitutions}
+
+The linear system treats the probability of a CXp as a
+shared resource among its constituent indices.
+For each index $i$, the "Responsibility Score" $S_i$ is:
+%
+$$S_i = \sum_{j: i \in cxp_j} \frac{P(cxp_j)}{|cxp_j|}$$
+%
+Where $|cxp_j|$ is the size of the explanation (minimal set). 
+This takes into account the fact that if an explanation requires
+changing 5 tokens, the credit for that fix is
+divided across those 5 tokens.
+
+\section{Badness Attribution}
+
+How bad is each token in causing the rejection of a word?
+
+One string is accepted when every token is correct simultaneusly.
+
+\begin{itemize}
+    \item Let us define $v_i$ as the "badness" of token $i$,
+    \item Then, $(1 - v_i)$ as the "goodness", the probability
+    that token $i$ is correct.
+    \item The probability that the entire word is correct (accepted)
+    is the product of the probabilities that each token is correct:
+    $P(\text{Acceptance}) = \prod (1 - v_i)$,
+    \item Given a rejected word and a proposed CXP (repair) that
+    modifies certain tokens, the probability that this CXP
+    leads to acceptance is:
+    . 
+    And we know that the tokens that are not part of the cxp
+    can be valid.
+    $\forall_{i \notin CXP} (1 - v_i) = 1$ the goodness is 1.
+    $P(\text{Acceptance with CXP}) = \prod (1 - v_i) = \prod_{i \in CXP} (1 - v_i)$,
+
+\end{itemize}
+
+\section{Example Probabilistic context-free grammar}
+
+Let us consider a simple PCFG that generates balanced parentheses:
+
+S - S S
+
+S - L R
+
+S - L SR
+
+N - 'number'
+
+L - '('
+
+R - ')'
+
+SR - S R
+
+SR - N R
+
+
+Each production rule has an associated probability:
+
+P(S - S S) = 0.1
+
+P(S - L R) = 0.2
+
+P(S - L SR) = 0.7
+
+P(N - 'number') = 1.0
+
+P(L - '(') = 1.0
+
+P(R - ')') = 1.0
+
+P(SR - S R) = 0.1
+
+P(SR - N R) = 0.9
+
+consider the rejected string: "( number ) ) ( )"
+
+There are two minimal contrastive explanations (CXPs) that can
+repair this string:
+CXP1: Change index 1 to \text{( ( ) ) ( )}
+
+\begin{itemize}
+    \item S - S S (0.1)
+    \begin{itemize}
+        \item S - L SR (0.7)
+        \begin{itemize}
+            \item L - ( (1.0)
+            \item SR - S R (0.1)
+            \begin{itemize}
+                \item S - L R (0.2)
+                \item R - ) (1.0)
+            \end{itemize}
+        \end{itemize}
+        \item S - L R (0.2)
+    \end{itemize}
+\end{itemize}
+
+0.1*0.7*0.1*0.2*0.2 = 0.000028
+
+CXP2: Change indexes 3 and 4 to ( number ) ( number )
+
+
+\section{Kaczmarz method}
+
+% Each index $i$ has an associated "badness" $v_i$,
+% representing the probability that the token at index $i$
+% is incorrect or causes rejection.
+
+Para justificar el uso de la multiplicación en tu modelo de
+Rejection Attribution Score (RAS) y su relación con la "maldad"
+($v_i$) en el contexto de tu doctorado, debes fundamentarlo en
+tres pilares: la lógica booleana de los autómatas, la teoría de
+probabilidad de las gramáticas (PCFG) y la tratabilidad matemática.
+Aquí tienes la justificación técnica y académica:1. 
+La lógica del "Y" (Intersección de Eventos)En la teoría de
+lenguajes formales, para que una palabra sea aceptada por un
+autómata (o generada por una gramática), todas las restricciones
+estructurales deben cumplirse simultáneamente.
+Es una condición de tipo AND
+
+Si definimos $(1 - v_i)$ como la
+probabilidad de que el índice $i$ sea "correcto" o "válido" según
+las reglas de la gramática, la aceptación de la palabra completa
+es el evento donde el índice 1 es válido Y el índice 2 es válido
+Y así sucesivamente.
+
+En teoría de probabilidad, la probabilidad de
+la intersección de eventos independientes es el producto de sus
+probabilidades individuales: 
+$P(\text{Aceptación}) = P(\text{validez}_1) \cdot P(\text{validez}_2) \dots$
+
+Por lo tanto, $P = \prod (1 - v_i)$
+es la representación natural de una estructura donde el fallo de un
+solo componente puede comprometer la aceptación total.
+
+
+
+2. Justificación mediante el modelo de "Canal con Ruido"Para tu tesis,
+puedes presentar la palabra rechazada como una versión "ruidosa" o "corrupta"
+de una palabra válida.Justificación: Cada $v_i$ representa la probabilidad
+de que haya ocurrido un error de transformación en el índice $i$.
+Bajo esta premisa, la probabilidad de que una palabra reparada
+(una explicación contrastiva como $[1, 3]$) sea la "verdadera" intención
+del usuario depende de que los demás índices se mantengan correctos.
+La multiplicación cuantifica la verosimilitud de esa reparación estructural.

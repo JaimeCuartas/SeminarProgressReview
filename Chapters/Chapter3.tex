@@ -1,41 +1,734 @@
-\chapter{Future Plan}
+\chapter{Progress}
 
-In my third year, I plan to finalize the 
-validation and theoretical details for
-Formal Explanations for Pushdown Automata.
-Then, I will address Research Problem 3,
-investigating formal explanations for
-models with sthocastic behaviour.
+\section{Model Proposal: Context-Free Grammar (CFG) Explanations}
 
-\begin{figure}[ht]
-\centering
-\begin{tikzpicture}
-\begin{ganttchart}[%%%
-    y unit title=0.5cm,
-    y unit chart=0.6cm,
-    x unit=0.2cm,
-    vgrid={*5{draw=none}, dotted},
-    hgrid,
-    time slot format=isodate-yearmonth,
-    time slot unit=month,
-    title/.append style={shape=rectangle, fill=black!10},
-    title height=1,
-    bar/.append style={fill=green!70},
-    bar height=.6,
-    bar label font=\normalsize\color{black!90},
-    group top shift=.6,
-    group height=.3,
-    group peaks height=.2,
-  ]{2024-01}{2027-06}
-  \gantttitlecalendar{year} \\
-   \ganttbar{Changing Supervisors}{2024-01}{2024-05} \\
-    \ganttbar{Literature Review}{2024-05}{2027-06} \\
-    \ganttbar{Explaining FA}{2024-06}{2025-06} \\
-    \ganttbar{Explaining PDA}{2025-03}{2026-03} \\
-    \ganttbar{Explaining Stochastic Models}{2026-03}{2026-12} \\
-    \ganttbar{Thesis write-up}{2027-01}{2027-06}
-    \end{ganttchart}
-\end{tikzpicture}
-\caption{Timeline to completion of the PhD project}
-\label{fig:timeline}
-\end{figure}
+The research has evolved
+from the study of Finite Automata (FA)
+to more expressive computational models.
+%
+While FA provided a baseline for explaining
+sequential behaviors,
+%
+many complex problems require the model to
+``remember'' an arbitrary number of previous
+inputs in the sequence
+to determine the validity of subsequent inputs
+
+Consider the abstract language $L=\{a^{n}b^{n} \mid n \geq 1\}$,
+which represents a sequence where every `a' must
+be matched by a corresponding `b'.
+
+\begin{itemize}
+  %
+  \item The Limitation: A standard
+  Finite Automaton (FA) possesses no
+  stack-based memory.
+  %
+  Therefore, it cannot count the number
+  of $a$'s to ensure they match the number
+  of $b$'s once $n$ exceeds the number
+  of states in the machine \cite{DragonBook}.
+  \item The Explanation Failure:
+  If a PDA were used to validate a sequence,
+  it would process inputs.
+  %
+  Upon encountering a mismatch (e.g., $a^{4}b^{2}$),
+  it might reject the sequence, but it lacks the
+  the context to generate a contrastive
+  explanation such as:
+  ``The sequence is invalid because the third or fourth `a'
+  was not closed by a matching `b'.''
+  Instead, it can only report a
+  ``transition failure'' at the specific index,
+  obscuring the root cause of the error.
+
+\end{itemize}
+
+\begin{itemize}
+  \item \textbf{From FA to PDA:}
+  We propose the use of Pushdown Automata (PDAs)
+  to model decision-making processes with memory.
+
+  Unlike FA, the addition of a stack
+  allows the description of more complex
+  languages.
+  Here the challenge is how to explain
+  PDA decisions.
+\end{itemize}
+
+\section{Motivation: The Gap between Detection and Explanation}
+
+One well established application of Context-Free Grammars
+is in the design of programming languages and compilers.
+Compilers are highly efficient at detecting when a
+sequence of tokens fails to belong to a grammar.
+%
+However, a fundamental question is:
+are they able of generating a useful \emph{explanation}
+for why the failure occurred or how to fix it?
+
+Consider the following C code, where a typo has
+introduced a double opening bracket \texttt{\{\{} in the \texttt{for} loop:
+%
+\begin{lstlisting}[language=C]
+int main(){
+    for(int i=0; i<10; i++){{  // <--- Error: Double bracket
+        printf("hello");
+    }
+}
+\end{lstlisting}
+%
+When compiled (e.g., using GCC or Clang), the parser
+consumes the input until it reaches
+\textless\textless EOF\textgreater\textgreater (end-of-file),
+finding only then that
+EOF was not expected,
+instead there is an incomplete structure, the token `\}'
+is expected before \textless\textless EOF\textgreater\textgreater.
+The resulting error message is:
+%
+\begin{verbatim}
+error: expected '}' at end of input
+   5 | }
+     |  ^
+\end{verbatim}
+%
+\noindent \textbf{The Explanation:}
+While the compiler's output is correct,
+the file ended while the stack still
+contained an open brace that was not closed yet.
+It is \textit{misleading}.
+\begin{itemize}
+  %
+  \item \textbf{Root Cause:}
+  The compiler points to line 5
+  (the end of the file) as the location of the error.
+  However, the root cause is located at line 2.
+  %
+  \item \textbf{Lack of Contrastive Reasoning:}
+  A human (or a formal explainer) would identify
+  that the input is ``almost correct''.
+  %
+  The explanation should not just report a
+  missing symbol at the end
+  but rather propose a \textit{minimal correction}.
+  %
+\end{itemize}
+%
+In this case, the minimal correction is not to add a brace at the end,
+but to remove the redundant opening brace at the loop initialization:
+%
+\begin{lstlisting}[language=C]
+int main(){
+    for(int i=0; i<10; i++){
+        printf("hello");
+    }
+}
+\end{lstlisting}
+%
+This discrepancy motivates the need for our proposed formal framework.
+We aim to move beyond isolated decisions to
+explained decisions revealing
+these minimal set of edits (Contrastive Explanations).
+
+\section{Preliminaries} 
+
+% \subsection{Pushdown Automata and Context-Free Grammars}
+
+% To provide a foundation for the proposed explanation
+% extraction methods, 
+% standard definitions and notations
+% for Pushdown Automata and Context-Free Grammar are adopted
+% \cite{IntroAutomataTheory,HandbookTheoreticalContextFreeGrammar}.
+
+% \begin{definition}[Pushdown Automaton]
+%   A Pushdown Automaton (PDA) extends the capabilities of a
+%   Finite Automaton by incorporating an infinite memory stack.
+%   A PDA is formally defined as a 7-tuple
+%   $\mathcal{A}=(Q,\Sigma,V,\delta,q^0,v^0,F)$, where:
+%   \begin{itemize}
+%     %
+%     \item Q is a finite set of states.
+%     %
+%     \item $\Sigma$ is the input alphabet, a finite
+%     terminal alphabet.
+%     %
+%     \item $V$ is the stack alphabet, a finite
+%     nonterminal alphabet that can be pushed
+%     onto or popped from the stack.
+%     %
+%     \item $\delta:Q\times(\Sigma\cup\{\epsilon\}) \times V \rightarrow \mathcal{P}(Q \times V^*)$
+%     %
+%     \footnote{$\mathcal{P}$ denotes the power set
+%     (the set of all its subsets).
+%     %
+%     $V^*$ and $\Sigma^*$ denote the Kleene closures
+%     of the stack and input alphabets,
+%     respectively,
+%     %
+%     representing the sets of all finite strings formed
+%     by those alphabets.}
+%     %
+%     is the transition function.
+%     %
+%     It dictates how the machine transitions between states and
+%     modifies the stack based on the current state, input symbol,
+%     and the top symbol of the stack.
+%     %
+%     \item $q^0 \in Q$ is the initial state.
+%     \item $v^0 \in V$ is the initial pushdownstore symbol.
+%     \item $F\subseteq Q$ is the set of accepting states.
+%   \end{itemize}
+% %
+%   A configuration of $\mathcal{A}$ is a triple $c=(q, \gamma, x)$ in
+%   $Q\times V^*\times\Sigma^*$. And the automaton moves from c into configuration
+%   $c'=(q',\gamma', x')$, denoted as $c\vdash c'$ if:
+%   %
+%   \begin{itemize}
+%     %
+%     \item $\gamma = v \gamma_1(v\in V)$
+%     %
+%     \footnote{$\gamma_{1} \in V^*$ represents
+%     the remaining symbols on the
+%     stack below the top symbol $v$.
+%     %
+%     Thus, $\gamma$ represents the full current stack, formed by
+%     the top symbol $v$ (to be processed) and the rest of the stack $\gamma_1$.}
+%     %
+%     , $x=ax' (a\in \Sigma)$,
+%     $\gamma'= m \gamma_1(m\in V^*)$ and $(q', m)\in \delta(q, a, v)$, namely ``a-move'';
+%     %
+%     \item or $\gamma = v \gamma_1(v\in V)$, $x=x'$, $\gamma'= m \gamma_1(m\in V^*)$
+%     and $(q',m)\in \delta(q,\epsilon,v)$, namely ``$\epsilon$-move''.
+%   \end{itemize}
+%   %
+%   A \emph{word} is accepted by a pushdown automaton if, starting with an
+%   empty stack, there is a path through the automaton such
+%   that the automaton stops in an
+%   accepting state after the entire string has been read.
+%   %
+%   The \emph{language} recognized by a PDA $\mathcal{A}$
+%   is the set of all accepted words, denoted as $L(\mathcal{A})$.
+%   %
+% \end{definition}
+
+% The following PDA recognizes the
+% language of balanced parentheses
+% (a subset of the Dyck language)
+% %
+% \footnote{
+%   The Dyck language describes a set of strings
+%   with balanced and properly
+%   nested brackets (e.g., (), [], \{\})
+%   %
+%   \cite{HandbookTheoreticalContextFreeGrammar}.
+%   The example focuses solely on non-empty
+%   sequences of balanced ( and ).
+% }
+% %
+% and is used throughout the document
+% to illustrate the proposed ideas.
+% %
+
+% \begin{figure}[ht]
+%   \centering
+%     \input{Figures/PDA/parenthesis_PDA.tex}
+%     \caption{A Pushdown Automaton $\mathcal{A}$
+%     accepting the language of balanced parentheses.
+%     The symbol \$ is used as the bottom-of-stack marker.}
+%   \label{fig:pda_example}
+% \end{figure}
+% \begin{example}
+
+%   Let $\mathcal{A}$ be the PDA
+%   that accepts the language generated by $G$ in 
+%   \autoref{ex:grammar_balanced}.
+%   The PDA uses a stack to track the depth of nesting,
+%   pushing a symbol for every open parenthesis and popping
+%   for every closed one. $B$ represents \textit{Balanced} in $G$.
+  
+%   \begin{itemize}
+%       \item States: $Q = \{q_0, q_1, q_f\}$, $q^0=q_0$, $F=\{q_f\}$
+%       \item Input Alphabet: $\Sigma = \{\texttt{(},\texttt{)}\}$
+%       \item Stack Alphabet: $V = \{ \texttt{(}, \texttt{)}, B, \$ \}$, $v^0=B$
+%       \item Transitions:
+%       \begin{enumerate}
+%           \item $\delta(q_0, \epsilon, \epsilon) = \{(q_1, B\,\$)\}$ \quad (Initialize stack with Start Symbol)
+%           \item $\delta(q_1, \epsilon, B) = \{(q_1, \texttt{(}B\texttt{)}B),(q_1, \texttt{(}B\texttt{)}),(q_1, \texttt{()}B),(q_1, \texttt{()})\}$ \quad (Expand $B$)
+%           \item $\delta(q_1, \texttt{(}, \texttt{(}\,) = \{(q_1, \epsilon)\}$ \quad (Match input `\texttt{(}' with stack `\texttt{(}')
+%           \item $\delta(q_1, \texttt{)},\texttt{)}\,) = \{(q_1, \epsilon)\}$ \quad (Match input `\texttt{)}' with stack `\texttt{)}')
+%           \item $\delta(q_1, \epsilon, \$) = \{(q_f, \epsilon)\}$ \quad (Accept if bottom marker is reached)
+%       \end{enumerate}
+%   \end{itemize}
+
+%   \autoref{fig:pda_example} illustrates this PDA.
+%     The configuration history of $\mathcal{A}$ for the input \texttt{()()} is:
+% %
+%   \begin{equation}
+%     \begin{aligned}
+%         & (q_0, \texttt{()()}, \epsilon) \\
+%         \vdash \ & (q_1, \texttt{()()}, B\$) && \text{(Initialize)} \\
+%         \vdash \ & (q_1, \texttt{()()}, \texttt{()}B\$) && \text{(Expand } B \to \texttt{()}B \text{)} \\
+%         \vdash \ & (q_1, \texttt{)()}, \texttt{)}B\$) && \text{(Match `\texttt{(}')} \\
+%         \vdash \ & (q_1, \texttt{()}, B\$) && \text{(Match `\texttt{)}')} \\
+%         \vdash \ & (q_1, \texttt{()}, \texttt{()}\$) && \text{(Expand } B \to \texttt{()} \text{)} \\
+%         \vdash \ & (q_1, \texttt{)}, \texttt{)}\$) && \text{(Match `\texttt{(}')} \\
+%         \vdash \ & (q_1, \epsilon, \$) && \text{(Match `\texttt{)}')} \\
+%         \vdash \ & (q_{f}, \epsilon, \epsilon) && \text{(Accept)}
+%     \end{aligned}
+%   \end{equation}
+% \end{example}
+
+\begin{definition}[Context-Free Grammar]
+  A Context-Free Grammar (CFG)
+  is defined as a 4-tuple $G=(V,\Sigma ,R,S)$, where:
+  \begin{itemize}
+    \item V (Variables/Non-terminals) is a finite set of variables (non-terminal symbols).
+    \item $\Sigma$ (Terminals) is a finite set of terminal symbols, disjoint from V.
+    \item R is a finite set of production rules of the
+    form $A \rightarrow \alpha$, where $A\in V$ describes
+    a variable and $\alpha\in(V \cup\Sigma)^*$ is a string
+    of variables and terminals.
+    \item $S\in V$ is the start variable.
+  \end{itemize}
+\end{definition}
+%
+
+A fundamental equivalence between CFGs and PDAs:
+a language $L$ is context-free iff there exists a
+PDA $\mathcal{A}$ such that $L(\mathcal{A})=L$
+\cite{HandbookTheoreticalContextFreeGrammar, IntroAutomataTheory}.
+%
+This equivalence allows us to use grammar-based
+parsing algorithms, such as CYK, to analyze the
+behavior of PDAs.
+
+The following PDA recognizes the
+language of balanced parentheses
+(a subset of the Dyck language)
+%
+\footnote{
+  The Dyck language describes a set of strings
+  with balanced and properly
+  nested brackets (e.g., (), [], \{\})
+  %
+  \cite{HandbookTheoreticalContextFreeGrammar}.
+  The example focuses solely on non-empty
+  sequences of balanced ( and ).
+}
+%
+and is used throughout the document
+to illustrate the proposed ideas.
+%
+
+\begin{example}
+  \label{ex:grammar_balanced}
+  Let $G=(\{Balanced\}, \{\texttt{(},\texttt{)}\}, R, Balanced)$ be the grammar
+  defined by the following 
+  production rules $R$:
+  %
+  \begin{equation}
+  \begin{aligned}
+      Balanced &\to \texttt{(} \, Balanced \, \texttt{)} \, Balanced & \text{(Rule 1)}\\
+      Balanced &\to \texttt{(} \, Balanced \, \texttt{)} & \text{(Rule 2)}\\
+      Balanced &\to \texttt{(} \, \texttt{)} \, Balanced & \text{(Rule 3)}\\
+      Balanced &\to \texttt{(} \, \texttt{)} & \text{(Rule 4)}
+  \end{aligned}
+  \end{equation}
+  %
+  This grammar generates the language of
+  properly nested parentheses.
+  For instance, the string \texttt{()()}
+  can be derivated as follows.
+  %
+  \begin{equation}
+  \begin{aligned}
+      Balanced &\Rightarrow \texttt{( )} \, \mathbf{Balanced}  && \text{(Rule 3: parentheses and Balanced)} \\
+               &\Rightarrow \texttt{( ) ( )} && \text{(Rule 4: Reduce `Balanced' to `()')}
+  \end{aligned}
+  \end{equation}
+\end{example}
+
+To analyze the behavior of the PDA
+using grammar-based approaches, we must first standardize
+the grammar structure (e.g. Chomsky Normal Form).
+%
+This enables the use of efficient
+parsing algorithms 
+like CYK (Cocke-Younger-Kasami) \cite{CYK1967, ParsingGuide}.
+
+\subsection{Chomsky Normal Form}
+
+Parsing algorithms often require the grammar to be in a
+canonical form to ensure predictable execution complexity.
+
+\begin{definition}[Chomsky Normal Form]
+  A Context-Free Grammar $G=(V, \Sigma, R, S)$ is in
+  \textit{Chomsky Normal Form} (CNF) \cite{IntroAutomataTheory} if every production rule
+  in $R$ is of one of the following two forms:
+  \begin{itemize}
+      \item $A \rightarrow BC$ (where $A, B, C \in V$)
+      \item $A \rightarrow a$ (where $a \in \Sigma$ and $a \neq \epsilon$)
+  \end{itemize}
+\end{definition}
+
+For every CFG $G$ whose languge contains at least one string
+other than $\epsilon$, then there is a grammar $G_1$
+in Chomsky Normal Form, such that $L(G_1)=L(G)\setminus\{\epsilon\}$.
+
+\begin{example}
+  \label{ex:cnf_conversion}
+  Consider the grammar $G$ from \autoref{ex:grammar_balanced}.
+  We transform $G$ into an
+  equivalent grammar $G'=(V', \Sigma, R', S)$ in CNF.
+  
+  \noindent \textbf{Step 1: Terminals to Non-terminals.}
+  To introduce variables $L$ and $R$ for terminals `\texttt{(}' and `\texttt{)}'.
+  \[ L \to \texttt{(} \quad \text{and} \quad R \to \texttt{)} \]
+  
+  \noindent \textbf{Step 2: Binary decomposition.}
+  To rewrite the original rules using new variables
+  and break down productions into binary steps.
+  
+  The resulting production rules $R'$ are:
+  \begin{center}
+  \begin{tabular}{r r l l}
+    Balanced  &$\to$&$ Nested\,Balanced$ & (Represents `\texttt{(} Balanced \texttt{)} Balanced' ) \\
+              &$\mid$& $Unclosed\,R$ & (Represents `\texttt{(} Balanced \texttt{)}' ) \\
+              &$\mid$& $Pair\,Balanced$ & (Represents `\texttt{( )} Balanced' ) \\
+              &$\mid$& $L\,R$ & (Represents `\texttt{( )}' ) \\
+    Nested &$\to$& $Unclosed\,R$ \\
+    Unclosed &$\to$& $L\,Balanced$  \\
+    Pair &$\to$& $L\,R$ \\
+    L &$\to$& \texttt{(} \\
+    R &$\to$& \texttt{)}
+  \end{tabular}
+  \end{center}
+\end{example}
+
+\subsection{The CYK Algorithm}
+
+The Cocke-Younger-Kasami (CYK) \cite{CYK1967, ParsingGuide}
+algorithm is a bottom-up
+parsing method that given a CFG $G$ in CNF
+determines whether a string $w$ belongs
+to a language $L(G)$. It operates via
+dynamic programming,
+constructing a triangular table
+where each cell $T[i,j]$ contains the set of
+non-terminals that can generate
+the substring of $w$ starting at $i$ and ending at $j$.
+
+\begin{definition}[CYK Table Construction]
+  \label{def:cyk}
+  For an input string $w = w_1 w_2 \dots w_n$:
+  \begin{enumerate}
+      \item \textbf{Base Case:} For each $i \in \{1, \dots, n\}$,
+      $T[i,i] = \{A \in V \mid A \to w_i\}$.
+      \item \textbf{Recursive Step ($j > i$):}
+      $T[i,j]$ contains $A$ if there exists
+      a rule $A \to BC$ and a split point $k$ ($i \le k < j$)
+      such that $B \in T[i,k]$ and $C \in T[k+1, j]$.
+  \end{enumerate}
+  The string is accepted if starting symbol $S \in T[1,n]$.
+\end{definition}
+
+\begin{example}
+  The \autoref{tab:cyk_triangular} illustrates a 
+  CYK Table construction to 
+  verify the acceptance of the string $w = \texttt{()()}$
+  using the CNF grammar derived in \autoref{ex:cnf_conversion}.
+  %
+  The top-right cell $T[1,4]$ represents the 
+  entire string.
+  %
+  It contains the Start symbol $B$ (Balanced)
+  because there is a rule `$Balanced \to Pair\,Balanced$'
+  for a split point $k=2$ where $Pair\in T[1,2]$ and $Balanced\in T[3,4]$.
+  
+  Similarly, the cell $T[1,2]$ contains $P$ (Pair) because
+  there is a rule $Pair \to L\, R$
+  for a split point $k=1$ ($L\in T[1,1]$ and $R\in T[2,2]$).
+
+  \begin{table}[h]
+    \centering
+    \renewcommand{\arraystretch}{1.5}
+    \begin{tabular}{|c|c|c|c|}
+    \hline
+    $w_1=`('\,\{L\}$ & $\{B,P\}$ & $\emptyset$ & $\mathbf{\{B\}}$ \\ \cline{1-4}
+
+    \multicolumn{1}{c|}{} & $w_2=`)'$ \{R\} & $\emptyset$ & $\emptyset$ \\ \cline{2-4}
+
+    \multicolumn{1}{c}{} & \multicolumn{1}{c|}{} & $w_3=`('$ \{L\} & \{B,P\} \\ \cline{3-4}
+
+    \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c|}{} & $w_4=`)'$ \{R\} \\ \cline{4-4}
+
+    \end{tabular}
+    \caption{CYK Table for $w=\text{()()}$. 
+    The cells $T[i,j]$ correspond to the substring starting at $i$ and ending at $j$.
+    The diagonal elements contain the input terminals and unary rules able to generate them.
+    \textbf{Abbreviations:} $B$ = Balanced, $P$ = Pair}
+    \label{tab:cyk_triangular}
+  \end{table}
+\end{example}
+
+\section{Explaining Pushdown Automata decisions}
+
+This report describes ongoing work to explain the
+behaviour of a Pushdown Automaton (PDA) $\mathcal{A}$
+on an input $w \in \Sigma^*$. Similar to explaining
+Finite Automata decisions~\cite{explainingFA},
+this problem can be viewed as a classifier mapping
+input $w$ to a class in
+${\cal K} = \{ \mbox{accept},\mbox{reject} \}$.
+%
+We propose two types of explanations:
+\textbf{Abductive Explanations} (AXps), which answer
+``Why does $\mathcal{A}$ accept/reject $w$?''; and
+\textbf{Contrastive Explanations} (CXps), which answer
+``How can $w$ be modified to alter the response of $\mathcal{A}$?''.
+
+The class of explanations that are considered in this work 
+are defined by regular expressions
+%
+\footnote{Standard regular expression notation is used.
+%
+$\emptyset$ denote the empty language, $c\in \Sigma$
+denotes the language $\{c\}$, and $\Sigma$ the
+language $\{\Sigma\}$, the set of all strings of length 1.
+%
+In general, given a regular expression $R$, the language it defines is
+denoted by $L(R)$.
+%
+The concatenation of two regular expressions $R_1 R_2$ denotes the
+regular language $\{ r_1 r_2 \mid r_1 \in L(R_1), r_2 \in L(R_2)\}$.
+}
+%
+formed by replacing
+some characters in $w$ by $\Sigma$.
+
+An \textbf{abductive explanation} relative to a word,
+is a set of indices such that
+if they are fixed, the prediction is going to remain
+the same regardless of the other tokens.
+%
+A \textbf{contrastive explanation}
+is a set of indices such that
+if they were free, it would be possible to flip the
+prediction.
+
+Typically, accepted words in Context-Free Languages
+are easy to modify to flip the prediction to \textbf{rejected}.
+Conversely, rejected words are often robustly wrong,
+requiring multiple coordinated changes (or single specific one)
+to repair the word.
+
+The following example illustrates this behaviour.
+
+\begin{example}[Fragility of Acceptance]
+Consider the accepted word $w = \texttt{()()}$.
+The validity relies on every token.
+Modifying any single index is sufficient
+to flip the prediction to \textbf{rejected}.
+
+Every single index constitutes a CXp:
+\begin{itemize}
+    \item \textbf{Index 1:} Changing `\texttt{(}' $\to$ `\texttt{)}' makes $\texttt{))()}$ (Rejected: starts with closing).
+    \item \textbf{Index 2:} Changing `\texttt{)}' $\to$ `\texttt{(}' makes $\texttt{((()}$ (Rejected: unmatched open).
+    \item \textbf{Index 3:} Changing `\texttt{(}' $\to$ `\texttt{)}' makes $\texttt{()))}$ (Rejected: unmatched close).
+    \item \textbf{Index 4:} Changing `\texttt{)}' $\to$ `\texttt{(}' makes $\texttt{()((}$ (Rejected: unmatched open).
+\end{itemize}
+
+Since every feature is critical, the AXp
+(the subset of features required to guarantee acceptance)
+is the entire word.
+\end{example}
+
+The problem becomes significantly more
+interesting for rejected words.
+
+\begin{example}[Robustness of Rejection]
+  \label{ex:rejected_parenthesis}
+Consider the rejected word $w = \texttt{))))}$.
+Changing a single index
+is insufficient to flip the prediction to \textbf{accepted}.
+%
+There are only two Minimal CXps for this word:
+%
+\begin{itemize}
+    \item $\text{CXp}_1 = \{1, 2\}$: Generates \texttt{\underline{((}))}.
+    \item $\text{CXp}_2 = \{1, 3\}$: Generates \texttt{\underline{(})\underline{(})}.
+\end{itemize}
+%
+From this, we can extract meaningful AXps that are sufficient
+to \textit{guarantee} rejection:
+%
+\begin{itemize}
+  %
+  \item $\text{AXp}_1 = \{1\}$: The first symbol `\texttt{)}'
+  guarantees rejection regardless of the remaining suffix.
+  %
+  \item $\text{AXp}_2 = \{2, 3\}$: The substring `\texttt{))}'
+  at indices 2 and 3 guarantees rejection for any word of length 4.
+  %
+\end{itemize}
+\end{example}
+
+% Similarly to FXAI~\cite{delivering_trust,explainingFA}, we define a shorthand
+% notation for explanations using subsets of positions in
+% $w \in L(\mathcal{A})$:
+% %
+% \begin{align*}
+%     %
+%     \axp_l^u(S, w)= L(s_1 \cdots s_n) \mid s_i = w[i] \text{ if } i\in
+%     S \text{ else } \Sigma \\
+%     %
+%     \cxp_l^u(S, w)= L(s_1 \cdots s_n) \mid s_i = w[i] \text{ if }
+%     i\not\in S \text{ else } \Sigma
+%     %
+% \end{align*}
+
+% \begin{example} \label{ex:indices}
+%     %
+%     Consider the setup of Example~\ref{ex:rejected_parenthesis}.
+%     %
+%     Given the word $w=\texttt{()()}$,
+%     $L(\texttt{)}\Sigma\Sigma\Sigma) = \axp(\{1\}, w)$
+%     and $L(\Sigma\texttt{))}\Sigma) = \axp(\{2,3\}, w)$
+%     %
+%     Similarly, $L(\Sigma\Sigma\texttt{))})=\cxp(\{1,2\}, w)$ and
+%     $L(\Sigma\texttt{)}\Sigma\texttt{)})=\cxp(\{1,3\}, w)$.
+%     %
+%     \qed
+%     %
+% \end{example}
+
+\subsection{Extracting One Formal Explanation}
+
+\begin{definition}[CYK-based Verification of CXp]
+  \label{def:cyk_cxp}
+  For an input string $w = w_1 w_2 \dots w_n$ and a grammar in Chomsky Normal Form, the CYK algorithm is modified to verify if an index set $S \subseteq \{1, \dots, n\}$ is a CXp for a rejected word as follows:
+  \begin{enumerate}
+      \item \textbf{Base Case:} For each $i \in \{1, \dots, n\}$:
+      \begin{itemize}
+        %
+        \item If $i \in S$: $T[i,i] = \{A \in V \mid \exists \alpha \in \Sigma, A \to \alpha \}$
+        (all non-terminal symbols with at least one unary rule).
+        %
+        \item If $i \notin S$ (Fixed): $T[i,i] = \{A \in V \mid A \to w_i\}$ (as Standard CYK).
+      \end{itemize}
+      \item \textbf{Recursive Step ($j > i$):}
+        Standard CYK update
+      %\item \textbf{Recursive Step ($j > i$):} $T[i,j] = \{A \mid A \to BC, B \in T[i, k], C \in T[k+1, j] \text{ for some } i \le k < j\}$.
+  \end{enumerate}
+  The set $S$ is a valid CXp if the start symbol belongs to $T[1,n]$.
+\end{definition}
+
+
+\begin{table}[h]
+  \centering
+  \renewcommand{\arraystretch}{1.5}
+  \begin{tabular}{|c|c|c|c|}
+  \hline
+  $w_1=\Sigma$ \{L,R\} & \{B,P\} & \{L,U\} & $\mathbf{\{B\}}$ \\ \cline{1-4}
+
+  \multicolumn{1}{c|}{} & $w_2=\Sigma$ \{L,R\} & \{B,P\} & $\emptyset$ \\ \cline{2-4}
+
+  \multicolumn{1}{c}{} & \multicolumn{1}{c|}{} & $w_3=\texttt{)}$ \{R\} & $\emptyset$ \\ \cline{3-4}
+
+  \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c|}{} & $w_4=`)'$ \{R\} \\ \cline{4-4}
+
+  \end{tabular}
+  \caption{
+    Modified CYK Table verifying $\texttt{))))}$.
+    %
+    Indices 1 and 2 are treated as wildcards ($\Sigma$).
+    %
+    \textbf{Abbreviations:}
+    $B$ = Balanced, $P$ = Pair, $U$ = Unclosed
+  }
+  \label{tab:cyk_cxp}
+\end{table}
+
+\begin{algorithm}[tb]
+  \caption{\textsc{ExtractCXp} -- a Single CXp Extraction}
+\label{alg:extract_cxp}
+\textbf{Input}: Context-Free Grammar $G$, Candidate set $\YYY$ (initially $\{1..\dots|w|\}$), word $w$ \\
+\textbf{Output}: Minimal CXp $\YYY$
+\begin{algorithmic}[1]
+  \IF{\textbf{not} \textsc{IsCXp}$(G, \YYY, w)$}
+      \STATE \textbf{return} $\bot$
+  \ENDIF
+  \FORALL{$i \in \YYY$} 
+    \IF{\textsc{IsCXp}$(G, \YYY \setminus \{i\}, w)$}
+      \STATE $\YYY \gets \YYY \setminus \{i\}$
+    \ENDIF
+  \ENDFOR
+  \STATE \textbf{return} $\YYY$
+\end{algorithmic}
+\end{algorithm}
+
+
+
+Algorithm~\ref{alg:extract_cxp} extracts a minimal CXp
+using a greedy deletion strategy.
+%
+Initially, $\YYY$ includes all indices
+(effectively treating the whole word as wildcards).
+%
+The algorithm iterates through the candidates,
+attempting to ``recover'' the original token
+$w_i$ at each position.
+%
+If the function \textsc{IsCXp} (Definition~\ref{def:cyk_cxp})
+confirms that the word can still be corrected \textit{without}
+changing index $i$,
+then $i$ is redundant and removed from the explanation,
+%
+otherwise, $i$ is part of the explanation.
+%
+The result is a minimal CXp: removing any index from $\YYY$
+would find a pattern containing no valid strings in $L(G)$.
+
+
+% Given a rejected word w, Algorithm~\ref{alg:extract_cxp} extracts a
+% minimal CXp by iteratively refining a candidate set Y.
+% Initially, the algorithm starts with a full set of ``free'' indices
+% represented by the language $L(\Sigma_1...\Sigma_{|w|})$, 
+% effectively searching for any accepted word of length $|w|$
+% by the Context-Free Grammar G.
+
+% The algorithm attempts to ``recover''
+% characters from the original word w by
+% iterating through the indices in Y. For each index $i\in\YYY$:
+% \begin{itemize}
+% \item The index is temporarily removed from the candidate set,
+% meaning the original character $w_i$ is restored at that position.
+% %
+% \item The function \textsc{IsCXp} (as described in Definition~\ref{def:cyk_cxp})
+% verifies if an accepted word can still be generated given the remaining wildcards.
+% %
+% \item If \textsc{IsCXp} returns true,
+% the character $w_i$ is considered redundant to the explanation
+% of rejection and is permanently removed from Y.
+% %
+% \item Otherwise, $w_i$ is a necessary token of the minimal set
+% required for a correction and is part of the resulting CXp.
+% \end{itemize}
+
+% The resulting output is a \textit{minimal} CXp.
+% %
+% It represents a smallest subset of indices such that,
+% %
+% if those specific characters are allowed to change to any terminal
+% in $\Sigma$, the word can be ``fixed'' to satisfy the grammar.
+% Any further reduction of the set $\YYY$ would result in a
+% pattern that contains no valid strings in $L(G)$.
+
+\textbf{Abductive Explanations} (AXps) are extracted
+similarly.
+%
+Since AXps represent sufficient conditions for rejection,
+a set $S$ is a valid AXp if treating indices in $S$ as
+fixed (and all others as wildcards) results in the
+start symbol not appearing in $T[1,n]$.
