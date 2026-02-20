@@ -32,7 +32,7 @@ be matched by a corresponding `b'.
   A Context-Free Grammar (CFG)
   can describe the language $L$,
   standard parsing algorithms only
-  recognize whether an input is valid.
+  recognise whether an input is valid.
   %
   Upon encountering a mismatch (e.g., $a^{4}b^{2}$),
   the parser identifies a failure but lacks
@@ -121,7 +121,7 @@ It is \textit{misleading}.
 \end{itemize}
 %
 In this case, the minimal correction is not to add a brace at the end,
-but to remove the redundant opening brace at the loop initialization:
+but to remove the redundant opening brace at the loop initialisation:
 %
 \begin{lstlisting}[language=C]
 int main(){
@@ -310,7 +310,7 @@ utilised throughout this ongoing work.
 % parsing algorithms, such as CYK, to analyze the
 % behavior of PDAs.
 
-The following CFG recognizes the
+The following CFG recognises the
 language of balanced parentheses
 (a subset of the Dyck language)
 %
@@ -356,7 +356,7 @@ to illustrate the proposed ideas.
   \end{equation}
 \end{example}
 %
-To analyse a CFG, we must first standardize
+To analyse a CFG, we must first standardise
 the grammar structure (e.g. Chomsky Normal Form).
 %
 This enables the use of efficient
@@ -609,7 +609,11 @@ as described in Definition \ref{def:cyk_cxp}.
 
 \begin{definition}[CYK-based Verification of CXp]
   \label{def:cyk_cxp}
-  For an input string $w = w_1 w_2 \dots w_n$ and a grammar in Chomsky Normal Form, the CYK algorithm is modified to verify if an index set $S \subseteq \{1, \dots, n\}$ is a CXp for a rejected word as follows:
+  For an input string $w = w_1 w_2 \dots w_n$ and
+  a grammar in Chomsky Normal Form,
+  the CYK algorithm is modified to
+  verify if an index set $S \subseteq \{1, \dots, n\}$
+  is a CXp for a rejected word as follows:
   \begin{enumerate}
       \item \textbf{Base Case:} For each $i \in \{1, \dots, n\}$:
       \begin{itemize}

@@ -20,7 +20,7 @@ This approach allows us to generate formal explanations,
 why a specific sequence of actions leads to a particular outcome. 
 Automata are widely used in software verification 
 \cite{PrinciplesModelChecking}, design of communication protocols
-\cite{SPINModelChecker},and sintax parsing in compiler \cite{DragonBook}.
+\cite{SPINModelChecker}, and syntax parsing in compiler \cite{DragonBook}.
 When a computational model, such as a Finite Automaton (FA) or a
 Pushdown Automaton (PDA), accepts or rejects an input string,
 the reasoning behind that decision can be non-trivial.
@@ -28,16 +28,16 @@ the reasoning behind that decision can be non-trivial.
 Understanding why a specific input was accepted or rejected
 is crucial for debugging, and refinement purposes.
 
-This research project investigates the formalization 
+This research project investigates the formalisation 
 of explanations for sequential decision-making. 
 %
-Having addressed an approach to deliver formal explanations
-for Finite Automata (FA) in the first stage of this research
-and submitting it to a ICALP 2026.
+Having developed an approach to deliver formal explanations
+for Finite Automata (FA) during the first stage of this research,
+submitted to ICALP 2026.
 %
 I now move to address
-explanations for Context-Free Languages (CFG) /
-Pushdown Automata (PDA) decisions.
+explanations for Context-Free Grammar (CFG)
+decisions.
 
 Current literature focuses on the
 \textit{performance} of parsing rather than the
@@ -55,7 +55,7 @@ error recovery \cite{DragonBook, MinimumEditDistancePDA},
 often scaling linearly with input size, they treat the
 decision process as the main objective.
 %
-In this work, we prioritize interpretability by
+In this work, we prioritise interpretability by
 formally defining and computing the minimal reasons
 for a parsing error with minimal sets of
 corrections required to resolve it.
