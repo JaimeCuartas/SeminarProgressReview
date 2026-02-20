@@ -33,6 +33,7 @@
 
 \usepackage{algorithm}
 \usepackage[noend]{algorithmic}
+\usepackage{pdfpages}
 
 \newcommand{\axp}{\mathsf{AXp}}
 \newcommand{\cxp}{\mathsf{CXp}}
@@ -216,6 +217,8 @@
 \lhead{\emph{Bibliography}}  % Change the left side page header to "Bibliography"
 \bibliographystyle{unsrtnat}  % Use the "unsrtnat" BibTeX style for formatting the Bibliography
 \bibliography{Bibliography}  % The references (bibliography) information are stored in the file named "Bibliography.bib"
+
+\includepdf[pages=-,offset=2cm -2cm]{Chapters/XAI-DFA.pdf}
 
 \end{document}  % The End
 %% ----------------------------------------------------------------
