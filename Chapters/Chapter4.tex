@@ -2,17 +2,17 @@
 
 \section{Model Proposal: Context-Free Grammar (CFG) Explanations}
 
-The research has evolved
+This work evolves
 from the study of Finite Automata (FA)
 to more expressive computational models.
 %
-While FA provided a baseline for explaining
-sequential behaviors,
+While FAs provide a baseline for explaining
+sequential behaviour,
 %
 many complex problems require the model to
 ``remember'' an arbitrary number of previous
 inputs in the sequence
-to determine the validity of subsequent inputs
+to determine the validity of subsequent inputs.
 
 Consider the abstract language $L=\{a^{n}b^{n} \mid n \geq 1\}$,
 which represents a sequence where every `a' must
@@ -29,12 +29,14 @@ be matched by a corresponding `b'.
   of $b$'s once $n$ exceeds the number
   of states in the machine \cite{DragonBook}.
   \item The Explanation Failure:
-  If a PDA were used to validate a sequence,
-  it would process inputs.
+  A Context-Free Grammar (CFG)
+  can describe the language $L$,
+  standard parsing algorithms only
+  recognize whether an input is valid.
   %
   Upon encountering a mismatch (e.g., $a^{4}b^{2}$),
-  it might reject the sequence, but it lacks the
-  the context to generate a contrastive
+  the parser identifies a failure but lacks
+  the mechanisms to generate a contrastive
   explanation such as:
   ``The sequence is invalid because the third or fourth `a'
   was not closed by a matching `b'.''
@@ -45,15 +47,18 @@ be matched by a corresponding `b'.
 \end{itemize}
 
 \begin{itemize}
-  \item \textbf{From FA to PDA:}
-  We propose the use of Pushdown Automata (PDAs)
-  to model decision-making processes with memory.
+  \item \textbf{From Regular to
+  Context-Free Languages:}
+  %
+  We propose the use of Context-Free Languages
+  to model decision-making processes that 
+  require stack-based memory.
 
-  Unlike FA, the addition of a stack
-  allows the description of more complex
+  Unlike FAs, which are limited to Regular Languages,
+  CFGs allow the description of more complex
   languages.
-  Here the challenge is how to explain
-  PDA decisions.
+  The core challenge is how to explain these
+  CFG decisions.
 \end{itemize}
 
 \section{Motivation: The Gap between Detection and Explanation}
@@ -279,6 +284,9 @@ these minimal set of edits (Contrastive Explanations).
 %   \end{equation}
 % \end{example}
 
+This section defines the core concepts
+utilised throughout this ongoing work.
+
 \begin{definition}[Context-Free Grammar]
   A Context-Free Grammar (CFG)
   is defined as a 4-tuple $G=(V,\Sigma ,R,S)$, where:
@@ -293,16 +301,16 @@ these minimal set of edits (Contrastive Explanations).
   \end{itemize}
 \end{definition}
 %
-A fundamental equivalence between CFGs and PDAs:
-a language $L$ is context-free iff there exists a
-PDA $\mathcal{A}$ such that $L(\mathcal{A})=L$
-\cite{HandbookTheoreticalContextFreeGrammar, IntroAutomataTheory}.
-%
-This equivalence allows us to use grammar-based
-parsing algorithms, such as CYK, to analyze the
-behavior of PDAs.
+% A fundamental equivalence between CFGs and PDAs:
+% a language $L$ is context-free iff there exists a
+% PDA $\mathcal{A}$ such that $L(\mathcal{A})=L$
+% \cite{HandbookTheoreticalContextFreeGrammar, IntroAutomataTheory}.
+% %
+% This equivalence allows us to use grammar-based
+% parsing algorithms, such as CYK, to analyze the
+% behavior of PDAs.
 
-The following PDA recognizes the
+The following CFG recognizes the
 language of balanced parentheses
 (a subset of the Dyck language)
 %
@@ -338,7 +346,7 @@ to illustrate the proposed ideas.
   This grammar generates the language of
   properly nested parentheses.
   For instance, the string \texttt{()()}
-  can be derivated as follows.
+  can be derived as follows.
   %
   \begin{equation}
   \begin{aligned}
@@ -348,8 +356,7 @@ to illustrate the proposed ideas.
   \end{equation}
 \end{example}
 %
-To analyze the behavior of the PDA
-using grammar-based approaches, we must first standardize
+To analyse a CFG, we must first standardize
 the grammar structure (e.g. Chomsky Normal Form).
 %
 This enables the use of efficient
@@ -371,7 +378,7 @@ canonical form to ensure predictable execution complexity.
   \end{itemize}
 \end{definition}
 
-For every CFG $G$ whose languge contains at least one string
+For every CFG $G$ whose language contains at least one string
 other than $\epsilon$, then there is a grammar $G_1$
 in Chomsky Normal Form, such that $L(G_1)=L(G)\setminus\{\epsilon\}$.
 
@@ -382,11 +389,11 @@ in Chomsky Normal Form, such that $L(G_1)=L(G)\setminus\{\epsilon\}$.
   equivalent grammar $G'=(V', \Sigma, R', S)$ in CNF.
   
   \textbf{Step 1: Terminals to Non-terminals.}
-  To introduce variables $L$ and $R$ for terminals `\texttt{(}' and `\texttt{)}'.
+  Introduce variables $L$ and $R$ for terminals `\texttt{(}' and `\texttt{)}'.
   \[ L \to \texttt{(} \quad \text{and} \quad R \to \texttt{)} \]
   %
   \textbf{Step 2: Binary decomposition.}
-  To rewrite the original rules using new variables
+  Rewrite the original rules using new variables
   and break down productions into binary steps.
   
   The resulting production rules $R'$ are:
@@ -433,7 +440,7 @@ the substring of $w$ starting at $i$ and ending at $j$.
 \end{definition}
 
 \begin{example}
-  The \autoref{tab:cyk_triangular} illustrates a 
+  \autoref{tab:cyk_triangular} illustrates the
   CYK Table construction to 
   verify the acceptance of the string $w = \texttt{()()}$
   using the CNF grammar derived in \autoref{ex:cnf_conversion}.
@@ -471,11 +478,12 @@ the substring of $w$ starting at $i$ and ending at $j$.
   \end{table}
 \end{example}
 
-\section{Explaining Pushdown Automata decisions}
+\section{Explaining Context-Free Languages}
 
-This report describes ongoing work to explain the
-behaviour of a Pushdown Automaton (PDA) $\mathcal{A}$
-on an input $w \in \Sigma^*$. Similar to explaining
+This report describes ongoing work to explain decisions
+regarding membership in a Context-Free Grammar (CFG) $G$
+for an input $w \in \Sigma^*$.
+Similar to explaining
 Finite Automata decisions~\cite{explainingFA},
 this problem can be viewed as a classifier mapping
 input $w$ to a class in
@@ -483,23 +491,23 @@ ${\cal K} = \{ \mbox{accept},\mbox{reject} \}$.
 %
 We propose two types of explanations:
 \textbf{Abductive Explanations} (AXps), which answer
-``Why does $\mathcal{A}$ accept/reject $w$?''; and
+``Why does $G$ accept/reject $w$?''; and
 \textbf{Contrastive Explanations} (CXps), which answer
-``How can $w$ be modified to alter the response of $\mathcal{A}$?''.
+``How can $w$ be modified to alter the response of $G$?''.
 
-The class of explanations that are considered in this work 
-are defined by regular expressions
+In this work, the class of explanations languages
+is based on regular expressions
 %
 formed by replacing
 some characters in $w$ by $\Sigma$.
 
 An \textbf{abductive explanation} relative to a word,
-is a set of indices such that
+is a set of indices such that,
 if they are fixed, the prediction is going to remain
 the same regardless of the other tokens.
 %
 A \textbf{contrastive explanation}
-is a set of indices such that
+is a set of indices such that,
 if they were free, it would be possible to flip the
 prediction.
 
@@ -590,6 +598,14 @@ to \textit{guarantee} rejection:
 % \end{example}
 
 \subsection{Extracting One Formal Explanation}
+
+To extract a CXp for a rejected word, we must first
+establish an efficient method to verify
+whether a candidate set of indices allows the word
+to be accepted.
+%
+We achieve this by adapting the CYK parsing algorithm
+as described in Definition \ref{def:cyk_cxp}.
 
 \begin{definition}[CYK-based Verification of CXp]
   \label{def:cyk_cxp}
@@ -715,6 +731,11 @@ would find a pattern containing no valid strings in $L(G)$.
 similarly.
 %
 Since AXps represent sufficient conditions for rejection,
-a set $S$ is a valid AXp if treating indices in $S$ as
-fixed (and all others as wildcards) results in the
-start symbol not appearing in $T[1,n]$.
+a set $\mathcal{X}$ is a valid AXp if treating indices
+in $\mathcal{X}$ as
+fixed (and all others as wildcards) as
+$\textsc{IsCXp}(G, \overline{\mathcal{X}}, w)$
+and checking if the start symbol does not belong in $T[1,n]$.
+%
+
+ 

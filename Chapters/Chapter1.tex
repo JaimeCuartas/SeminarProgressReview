@@ -50,6 +50,12 @@ utilise sophisticated incremental parsing and adaptive LL(*)
 algorithms to ensure low-latency feedback for
 integrated development environments (IDEs).
 %
-While these methods are efficient at error recovery \cite{DragonBook},
+While these methods are efficient at 
+error recovery \cite{DragonBook, MinimumEditDistancePDA},
 often scaling linearly with input size, they treat the
 decision process as the main objective.
+%
+In this work, we prioritize interpretability by
+formally defining and computing the minimal reasons
+for a parsing error with minimal sets of
+corrections required to resolve it.
