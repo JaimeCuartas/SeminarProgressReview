@@ -1,0 +1,111 @@
+% content moved from root `content.tex`
+
+\section{Introduction \& Motivation}
+
+\begin{frame}{The Need for Formal Explainability}
+    \begin{itemize}
+        \item \textbf{The Rise of AI:} Increasing deployment of AI in dynamic, high-stakes environments necessitates rigorous eXplainable AI (XAI).
+        \vspace{0.3cm}
+        \item \textbf{The Current Gap:} 
+        \begin{itemize}
+            \item Most XAI methods rely on \textit{heuristic} approaches.
+            \item They lack rigorous mathematical guarantees about the explanations generated \cite{darwiche2023logic}.
+            \item There is a critical need for \textbf{formal approaches} that provide exact, provable reasons for AI decisions.
+        \end{itemize}
+        \vspace{0.3cm}
+        \item \textbf{The Challenge:} Explaining \textit{sequential decision-making} (where current actions depend on an arbitrary number of previous inputs).
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Motivation: Explaining Sequential Decisions}
+    \begin{itemize}
+        \item \textbf{Our Approach:} We model sequential processes using \textbf{Automata} and \textbf{Formal Languages} (FA, CFG).
+        \begin{itemize}
+            \item Widely used in software verification and syntax parsing.
+            \item Provide a symbolic, tractable representation of decision functions.
+        \end{itemize}
+        \vspace{0.3cm}
+        \item \textbf{The Problem with Current Parsers:}
+        \begin{itemize}
+            \item Modern tools (e.g., Tree-sitter, ANTLR) prioritize \textit{performance} and low-latency error recovery.
+            %\item They treat the decision process as a black box, obscuring the \textit{root cause} of a failure.
+        \end{itemize}
+        \vspace{0.3cm}
+        \item \textbf{Our Objective:} Shift the focus from purely performant parsing to \textbf{formal interpretability} by extracting the minimal reasons and corrections for sequential failures.
+    \end{itemize}
+\end{frame}
+
+
+\section{Research Problem Formulation}
+
+\begin{frame}{Research Problem Formulation}
+    \textbf{Overarching Goal:} To provide formal, mathematically guaranteed explanations for sequential decision-making across increasingly expressive computational models.
+    
+    \vspace{0.4cm}
+    
+    \begin{enumerate}
+        \item \textbf{Explaining Finite Automata (Completed)}
+        \begin{itemize}
+            \item How can we provide formal explanations for finite automata decisions?
+            %\item \textit{Focus:} Regular languages and sequential behaviors without memory.
+        \end{itemize}
+        
+        \vspace{0.3cm}
+        
+        \item \textbf{Explaining Context-Free Grammars (Current Focus)}
+        \begin{itemize}
+            \item How can we provide formal explanations for context-free grammar (CFG) decisions?
+            %\item \textit{Focus:} Languages requiring stack-based memory (nested dependencies).
+        \end{itemize}
+        
+        \vspace{0.3cm}
+        
+        \item \textbf{Explaining Stochastic Models (Future Work)}
+        \begin{itemize}
+            \item How can we provide formal explanations for decisions made by stochastic models?
+            \item \textit{Focus:} Probabilistic paths and ``most likely'' explanations (e.g., Probabilistic FA or Markov Models).
+        \end{itemize}
+    \end{enumerate}
+\end{frame}
+
+\section{Completed Work: Explaining Finite Automata}
+
+\begin{frame}{Explaining FA Decisions: The Framework}
+    \begin{itemize}
+        \item \textbf{The Setup:} We view a deterministic Finite Automaton (FA) as a classifier mapping an input word $w \in \Sigma^*$ to a class $\mathcal{K} = \{\text{accept}, \text{reject}\}$.
+        \vspace{0.2cm}
+        \item \textbf{Explanation Language:} We use regular expressions formed by substituting selected characters in $w$ with a wildcard token ($\star$).
+        \vspace{0.4cm}
+        \item \textbf{Two Types of Explanations:}
+        \begin{itemize}
+            \item \textbf{Abductive Explanations (AXps):} \textit{``Why does the FA accept/reject $w$?''}
+            \\ \small{A set of indices that, if \textbf{fixed}, guarantees the prediction remains unchanged regardless of the other tokens.}
+            \vspace{0.2cm}
+            \item \textbf{Contrastive Explanations (CXps):} \textit{``How can $w$ be modified to alter the response?''}
+            \\ \small{A minimal set of indices that, if \textbf{freed} (replaced by $\star$), makes it possible to flip the prediction.}
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Duality and Milestones}
+    \begin{itemize}
+        \item \textbf{The Minimal Hitting Set Duality:}
+        \begin{itemize}
+            \item Abductive and contrastive explanations share a profound structural relationship \cite{axpcxp}.
+            \item Every AXp is a minimal hitting set of the complete set of CXps, and vice versa.
+            \item \textit{Significance:} This duality forms the basis for the algorithms we developed to efficiently enumerate formal explanations for FAs.
+        \end{itemize}
+        
+        \vspace{0.6cm}
+        
+        \begin{block}{Research Milestone 1}
+            This foundational work on extracting and enumerating formal explanations for regular languages has been completed and submitted to \textbf{ICALP 2026}.
+        \end{block}
+    \end{itemize}
+\end{frame}
+
+
+% The Narrative Arc: Don't just read the bullets; tell the story of your PhD. Explain that you started with the baseline (Problem 1), are currently tackling the challenge of memory/context (Problem 2), and will ultimately bridge this into real-world uncertainty (Problem 3).
+
+% Pacing: Spend about 60 to 90 seconds here. The panel just needs to see the scope of your work before you dive deep into the technical weeds of Problem 1 and 2.
