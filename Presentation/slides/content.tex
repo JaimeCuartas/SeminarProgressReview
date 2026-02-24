@@ -1,111 +1,250 @@
 % content moved from root `content.tex`
 
-\section{Introduction \& Motivation}
+\section{Project Summary \& Refinements}
 
-\begin{frame}{The Need for Formal Explainability}
-    \begin{itemize}
-        \item \textbf{The Rise of AI:} Increasing deployment of AI in dynamic, high-stakes environments necessitates rigorous eXplainable AI (XAI).
-        \vspace{0.3cm}
-        \item \textbf{The Current Gap:} 
-        \begin{itemize}
-            \item Most XAI methods rely on \textit{heuristic} approaches.
-            \item They lack rigorous mathematical guarantees about the explanations generated \cite{darwiche2023logic}.
-            \item There is a critical need for \textbf{formal approaches} that provide exact, provable reasons for AI decisions.
-        \end{itemize}
-        \vspace{0.3cm}
-        \item \textbf{The Challenge:} Explaining \textit{sequential decision-making} (where current actions depend on an arbitrary number of previous inputs).
-    \end{itemize}
-\end{frame}
-
-\begin{frame}{Motivation: Explaining Sequential Decisions}
-    \begin{itemize}
-        \item \textbf{Our Approach:} We model sequential processes using \textbf{Automata} and \textbf{Formal Languages} (FA, CFG).
-        \begin{itemize}
-            \item Widely used in software verification and syntax parsing.
-            \item Provide a symbolic, tractable representation of decision functions.
-        \end{itemize}
-        \vspace{0.3cm}
-        \item \textbf{The Problem with Current Parsers:}
-        \begin{itemize}
-            \item Modern tools (e.g., Tree-sitter, ANTLR) prioritize \textit{performance} and low-latency error recovery.
-            %\item They treat the decision process as a black box, obscuring the \textit{root cause} of a failure.
-        \end{itemize}
-        \vspace{0.3cm}
-        \item \textbf{Our Objective:} Shift the focus from purely performant parsing to \textbf{formal interpretability} by extracting the minimal reasons and corrections for sequential failures.
-    \end{itemize}
-\end{frame}
-
-
-\section{Research Problem Formulation}
-
-\begin{frame}{Research Problem Formulation}
-    \textbf{Overarching Goal:} To provide formal, mathematically guaranteed explanations for sequential decision-making across increasingly expressive computational models.
+\begin{frame}{Summary}
+    \textbf{Thesis Title:} Formal Explainability
+    for Artificial Intelligence in
+    Dynamic Environments.
     
-    \vspace{0.4cm}
-    
+    \vspace{0.3cm}
+    \textbf{Goal:} Deliver explanations for
+    sequential decision-making models.
+    \vspace{0.3cm}
+    % To shift from
+    % heuristic XAI to
+    % \textit{formal, mathematically guaranteed} explanations for sequential decision-making models.
+
+    \textbf{The Research Roadmap:}
     \begin{enumerate}
-        \item \textbf{Explaining Finite Automata (Completed)}
-        \begin{itemize}
-            \item How can we provide formal explanations for finite automata decisions?
-            %\item \textit{Focus:} Regular languages and sequential behaviors without memory.
-        \end{itemize}
-        
-        \vspace{0.3cm}
-        
-        \item \textbf{Explaining Context-Free Grammars (Current Focus)}
-        \begin{itemize}
-            \item How can we provide formal explanations for context-free grammar (CFG) decisions?
-            %\item \textit{Focus:} Languages requiring stack-based memory (nested dependencies).
-        \end{itemize}
-        
-        \vspace{0.3cm}
-        
-        \item \textbf{Explaining Stochastic Models (Future Work)}
-        \begin{itemize}
-            \item How can we provide formal explanations for decisions made by stochastic models?
-            \item \textit{Focus:} Probabilistic paths and ``most likely'' explanations (e.g., Probabilistic FA or Markov Models).
-        \end{itemize}
+        \item \textbf{Finite Automata (Completed):}
+        Explaining Finite Automata decisions
+        and baseline sequential decisions.
+        \item \textbf{Context-Free Grammars (Current):}
+        Explaining languages Context-Free Languages
+        requiring (stack-based memory).
+        \item \textbf{Stochastic Models (Future):}
+        %Extracting the ``most likely'' formal
+        Explaining sequential decisions in
+        probabilistic environments.
     \end{enumerate}
 \end{frame}
 
-\section{Completed Work: Explaining Finite Automata}
+\begin{frame}{Summary}
 
-\begin{frame}{Explaining FA Decisions: The Framework}
-    \begin{itemize}
-        \item \textbf{The Setup:} We view a deterministic Finite Automaton (FA) as a classifier mapping an input word $w \in \Sigma^*$ to a class $\mathcal{K} = \{\text{accept}, \text{reject}\}$.
-        \vspace{0.2cm}
-        \item \textbf{Explanation Language:} We use regular expressions formed by substituting selected characters in $w$ with a wildcard token ($\star$).
-        \vspace{0.4cm}
-        \item \textbf{Two Types of Explanations:}
-        \begin{itemize}
-            \item \textbf{Abductive Explanations (AXps):} \textit{``Why does the FA accept/reject $w$?''}
-            \\ \small{A set of indices that, if \textbf{fixed}, guarantees the prediction remains unchanged regardless of the other tokens.}
-            \vspace{0.2cm}
-            \item \textbf{Contrastive Explanations (CXps):} \textit{``How can $w$ be modified to alter the response?''}
-            \\ \small{A minimal set of indices that, if \textbf{freed} (replaced by $\star$), makes it possible to flip the prediction.}
-        \end{itemize}
-    \end{itemize}
+    \textbf{Goal:} Deliver explanations for
+    sequential decision-making models.
+
+    \begin{tikzpicture}[
+        node distance=0.8cm,
+        roadmapbox/.style={
+            rectangle,
+            rounded corners,
+            draw,
+            thick,
+            text width=3.6cm, % Fits 3 boxes across a standard Beamer slide
+            align=left,
+            minimum height=3.5cm,
+            inner sep=6pt,
+            font=\small
+        },
+        completed/.style={roadmapbox, fill=green!10, draw=green!70!black},
+        current/.style={roadmapbox, fill=blue!10, draw=blue!70!black},
+        future/.style={roadmapbox, fill=gray!10, draw=gray!70!black},
+        arrow/.style={-{Stealth[scale=1.2]}, line width=1.5pt, draw=gray!80}
+    ]
+
+    % --- Nodes ---
+    \node[completed] (fa) {
+        \textbf{1. Finite Automata}\\
+        \vspace{0.1cm}
+        \textit{\textcolor{green!70!black}{(Completed)}}\\[0.3cm]
+        Explaining FA decisions and baseline sequential decisions.
+    };
+
+    \node[current, right=of fa] (cfg) {
+        \textbf{2. Context-Free Grammars}\\
+        \vspace{0.1cm}
+        \textit{\textcolor{blue!70!black}{(Current)}}\\[0.3cm]
+        Explaining Context-Free Languages requiring stack-based memory.
+    };
+
+    \node[future, right=of cfg] (stoch) {
+        \textbf{3. Stochastic Model}\\
+        \vspace{0.1cm}
+        \textit{\textcolor{gray!70!black}{(Future)}}\\[0.3cm]
+        Explaining sequential decisions in probabilistic environments.
+    };
+
+    % % --- Arrows ---
+    \draw[arrow] (fa) -- (cfg);
+    \draw[arrow] (cfg) -- (stoch);
+
+    \end{tikzpicture}
+\end{frame}
+
+\section{Completed Work: Finite Automata}
+
+\begin{frame}{Explaining Finite Automata}
+    % \begin{itemize}
+    %     \item We view a
+    %     FA as a mapping from an input $w \in \Sigma^*$
+    %     to a class $\mathcal{K} = \{\text{Accept}, \text{Reject}\}$.
+    %     \item Explanations are
+    %     Regular Expressions formed by substituting selected characters
+    %     in $w$ with a wildcard token ($\Sigma$).
+    % \end{itemize}
+
+    \vspace{0.2cm}
+    
+    \begin{center}
+    \scalebox{0.8}{
+    \begin{tikzpicture}[shorten >=1pt, node distance=1cm, on grid, auto, initial text=, thick]
+      \tikzstyle{every state}=[fill={rgb:black,1;white,10}, minimum size=18pt, inner sep=1pt]
+
+      % Nodes (compressed vertically)
+      \node[state, initial]            (q0) {0};
+      \node[state, opacity=0.3]        (q1) [right=1.8cm of q0, yshift=0.4cm] {1};
+      \node[state]                     (q2) [right=1.8cm of q0, yshift=-0.4cm] {2};
+      \node[state, opacity=0.3]        (q3) [right=1.8cm of q1] {3};
+      \node[state, opacity=0.3]        (q4) [right=1.8cm of q3] {4};
+      \node[state, accepting, double]  (q5) [right=3.6cm of q2] {5};
+
+      % Edges
+      \path[->]
+        (q0) edge[draw opacity=0.3] node[xshift=8pt, yshift=-1pt] {\texttt{a}} (q1)
+             edge node[xshift=-5pt, yshift=-2pt] {\texttt{b}} (q2)
+        (q1) edge[draw opacity=0.3] node[yshift=-2pt] {\texttt{a,b}} (q3)
+        (q2) edge node[yshift=-2pt] {\texttt{b}} (q5)
+             edge[draw opacity=0.3] node[xshift=2pt, yshift=-2pt] {\texttt{a}} (q3)
+        (q3) edge[draw opacity=0.3] node[yshift=-2pt] {\texttt{a}} (q4)
+             edge[draw opacity=0.3] node[xshift=-3pt, yshift=-2pt] {\texttt{b}} (q5)
+        (q4) edge[loop right, draw opacity=0.3] node[xshift=-2pt] {\texttt{a,b}} (q4)
+        (q5) edge[loop right] node[xshift=-2pt] {\texttt{a,b}} (q5);
+    \end{tikzpicture}
+    }
+    \end{center}
+
+    \vspace{-0.2cm} % Pulls the explanation boxes slightly closer to the automaton
+
+    % Visualizing AXp vs CXp
+    \begin{center}
+    \scalebox{0.8}{ % Scales the token boxes to match the aesthetic
+    \begin{tikzpicture}[
+        node distance=0.2cm,
+        token/.style={rectangle, draw, minimum size=0.55cm, font=\ttfamily},
+        wildcard/.style={rectangle, draw, minimum size=0.55cm, font=\ttfamily},
+        label/.style={font=\small\bfseries}
+    ]
+        % Original Word
+        \node[label] (lbl_w) at (-2, 0) {Input $w$:};
+        \node[token] (w1) at (0,0) {b};
+        \node[token, right=of w1] (w2) {b};
+        \node[token, right=of w2] (w3) {b};
+        \node[token, right=of w3] (w4) {b};
+        \node[token, right=of w4] (w5) {b};
+        \node[right=0.3cm of w5, font=\small\color{green!60!black}] {$\rightarrow$ Accept};
+
+        % Abductive Explanation 1
+        \node[label] (lbl_axp) at (-2, -0.9) {AXp 1:};
+        \node[token, fill=blue!10] (a1) at (0,-0.9) {b};
+        \node[token, fill=blue!10, right=of a1] (a2) {b};
+        \node[wildcard, right=of a2] (a3) {$\Sigma$};
+        \node[wildcard, right=of a3] (a4) {$\Sigma$};
+        \node[wildcard, right=of a4] (a5) {$\Sigma$};
+        \node[right=0.3cm of a5, font=\small\color{blue!70!black}] {$\rightarrow$ Guarantees Accept $L(\texttt{bb} \Sigma \Sigma \Sigma) \subseteq L(\mathcal{A})$};
+
+        % Abductive Explanation 2
+        \node[label] (lbl_axp) at (-2, -1.8) {AXp 2:};
+        \node[wildcard] (a1) at (0,-1.8) {$\Sigma$};
+        \node[wildcard, right=of a1] (a2) {$\Sigma$};
+        \node[token, fill=blue!10, right=of a2] (a3) {b};
+        \node[wildcard, right=of a3] (a4) {$\Sigma$};
+        \node[wildcard, right=of a4] (a5) {$\Sigma$};
+        \node[right=0.3cm of a5, font=\small\color{blue!70!black}] {$\rightarrow$ Guarantees Accept $L(\Sigma \Sigma \texttt{b} \Sigma \Sigma) \subseteq L(\mathcal{A})$};
+
+        % Contrastive Explanation (Freeing indices)
+        \node[label] (lbl_cxp) at (-2, -2.7) {CXp:};
+        \node[wildcard, fill=red!10] (c1) at (0,-2.7) {$\Sigma$};
+        \node[token, right=of c1] (c2) {b};
+        \node[wildcard, fill=red!10, right=of c2] (c3) {$\Sigma$};
+        \node[token, right=of c3] (c4) {b};
+        \node[token, right=of c4] (c5) {b};
+        \node[right=0.3cm of c5, font=\small\color{red!70!black}] {$\rightarrow$ Enables Reject $L(\Sigma \texttt{b} \Sigma \texttt{bb}) \not\subseteq L(\mathcal{A})$};
+
+    \end{tikzpicture}
+    }
+    \end{center}
 \end{frame}
 
 
-\begin{frame}{Duality and Milestones}
+% --- SLIDE 3: Milestone & Output ---
+\begin{frame}{Outcomes: Enumeration \& Milestone}
     \begin{itemize}
-        \item \textbf{The Minimal Hitting Set Duality:}
+        \item \textbf{Algorithmic Contribution:} 
         \begin{itemize}
-            \item Abductive and contrastive explanations share a profound structural relationship \cite{axpcxp}.
-            \item Every AXp is a minimal hitting set of the complete set of CXps, and vice versa.
-            \item \textit{Significance:} This duality forms the basis for the algorithms we developed to efficiently enumerate formal explanations for FAs.
+            \item Leveraged this duality to develop algorithms for the formal \textbf{enumeration} of explanations in Finite Automata.
+            \item Successfully maps the abstract concepts of XAI onto rigorous formal language properties.
         \end{itemize}
         
         \vspace{0.6cm}
         
-        \begin{block}{Research Milestone 1}
-            This foundational work on extracting and enumerating formal explanations for regular languages has been completed and submitted to \textbf{ICALP 2026}.
+        \begin{block}{Phase 1 Milestone Achieved}
+            \textbf{Status:} Completed.\\
+            \textbf{Output:} The formal definitions, duality proofs, and enumeration algorithms have been compiled and submitted to \textbf{ICALP 2026}.
         \end{block}
+        
+        \vspace{0.4cm}
+        \item \textit{Transitioning to Phase 2:} With the baseline for regular languages established, we now scale the complexity to languages requiring memory.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Project Refinements Since Confirmation}
+    \textbf{Refining the Scope and Methodology:}
+    \vspace{0.3cm}
+    
+    \begin{itemize}
+        \item \textbf{Shift from Automata Execution to Grammar Membership:}
+        \begin{itemize}
+            \item \textit{Initial Concept:} Explaining the execution trace and stack states of Pushdown Automata (PDA).
+            \item \textit{Refinement:} Framed the problem purely around \textbf{CFG membership} ($w \in L(G)$). This allows us to leverage efficient grammar-based parsing algorithms (like CYK) rather than tracking infinite PDA states.
+        \end{itemize}
+        
+        \vspace{0.3cm}
+        
+        \item \textbf{Targeted Probabilistic Scope:}
+        \begin{itemize}
+            \item \textit{Initial Concept:} Broad application to generic stochastic models.
+            \item \textit{Refinement:} Narrowed the final phase to focus specifically on Probabilistic Context-Free Grammars (PCFGs) and Markov Models, ensuring the mathematical foundation built in Phase 2 scales directly into Phase 3.
+        \end{itemize}
     \end{itemize}
 \end{frame}
 
 
-% The Narrative Arc: Don't just read the bullets; tell the story of your PhD. Explain that you started with the baseline (Problem 1), are currently tackling the challenge of memory/context (Problem 2), and will ultimately bridge this into real-world uncertainty (Problem 3).
+\begin{frame}{The Minimal Hitting Set Duality}
+    \begin{itemize}
+        \item \textbf{The Core Relationship:} Abductive and contrastive explanations share a formal duality \cite{axpcxp}.
+        \item Every AXp is a minimal hitting set of the complete set of CXps, and vice versa.
+        \item To flip a prediction (CXp), you must free at least one token from every reason that guarantees the current prediction (AXp).
+    \end{itemize}
 
-% Pacing: Spend about 60 to 90 seconds here. The panel just needs to see the scope of your work before you dive deep into the technical weeds of Problem 1 and 2.
+    \vspace{0.4cm}
+
+    % TikZ Diagram: Hitting Set Duality
+    \begin{center}
+    \begin{tikzpicture}[
+        node distance=3cm,
+        setnode/.style={circle, draw, thick, minimum size=1.5cm, align=center, font=\small\bfseries},
+        arrow/.style={<->, >=Stealth, thick, draw=black!70}
+    ]
+        \node[setnode, fill=blue!10, draw=blue!80] (axp) {$\mathbb{A}_w$\\ (All AXps)};
+        \node[setnode, fill=red!10, draw=red!80, right=of axp] (cxp) {$\mathbb{C}_w$\\ (All CXps)};
+        
+        \draw[arrow] (axp) -- node[above, font=\small\itshape] {Minimal Hitting Set} node[below, font=\small\itshape] {Duality} (cxp);
+        
+        % Little floating text blocks to explain what they do
+        \node[below=0.2cm of axp, font=\footnotesize, text width=2cm, align=center] {Fixes indices to\\ lock prediction};
+        \node[below=0.2cm of cxp, font=\footnotesize, text width=2cm, align=center] {Frees indices to\\ flip prediction};
+    \end{tikzpicture}
+    \end{center}
+\end{frame} 
