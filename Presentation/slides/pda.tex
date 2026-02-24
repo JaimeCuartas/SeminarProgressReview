@@ -1,0 +1,58 @@
+\begin{frame}[fragile]{Why Finite Automata Are Not Enough}
+
+    \begin{itemize}
+        \item $L=\{a^{n}b^{n} \mid n \geq 1\}$ cannot be described by a FA.
+        \item For a rejected word like \texttt{aaaabb},
+        standard parsers identify the error at the end.
+        %\item Standard parsers fail at the end of the input, obscuring the actual root cause (the extra bracket):
+    \end{itemize}
+    
+    \vspace{0.4cm}
+
+    \begin{columns}[T] % The [T] aligns the columns at the top
+        
+        % Left Column: C Code
+        \begin{column}{0.48\textwidth}
+            \textbf{Source Code:}
+\begin{lstlisting}[language=C, basicstyle=\ttfamily\scriptsize, frame=single]
+int main(){
+    for(int i=0; i<10; i++){{  // Error
+        printf("hello");
+    }
+}
+\end{lstlisting}
+        \end{column}
+
+        % Right Column: Compiler Error
+        \begin{column}{0.48\textwidth}
+            \textbf{Parser Output:}
+            % Note: Keep the verbatim text flush left so it doesn't add weird spaces
+\begin{small}
+\begin{verbatim}
+error: expected '}' at end of input
+5 | }
+  |  ^
+\end{verbatim}
+\end{small}
+        \end{column}
+
+    \end{columns}
+
+\end{frame}
+
+
+\begin{frame}{Explaining Context-Free Grammars}
+    \begin{itemize}
+        \item Transition to Context-Free Grammars (CFGs).
+        \item Consider $G=(\{B\}, \{\texttt{(},\texttt{)}\}, R, B)$ for balanced parentheses, with rules $R$:
+    \end{itemize}
+    %
+    \begin{equation}
+    \begin{aligned}
+        B &\to \texttt{(} \, B \, \texttt{)} \, B & \text{(Rule 1)}\\
+        B &\to \texttt{(} \, B \, \texttt{)} & \text{(Rule 2)}\\
+        B &\to \texttt{(} \, \texttt{)} \, B & \text{(Rule 3)}\\
+        B &\to \texttt{(} \, \texttt{)} & \text{(Rule 4)}
+    \end{aligned}
+    \end{equation}
+\end{frame}

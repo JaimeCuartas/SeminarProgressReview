@@ -1,0 +1,70 @@
+
+\begin{frame}{The Minimal Hitting Set Duality}
+    \begin{itemize}
+        \item \textbf{The Core Relationship:} Abductive and contrastive explanations share a formal duality \cite{axpcxp}.
+        \item Every AXp is a minimal hitting set of the complete set of CXps, and vice versa.
+        \item To flip a prediction (CXp), you must free at least one token from every reason that guarantees the current prediction (AXp).
+    \end{itemize}
+
+    \vspace{0.4cm}
+
+    % TikZ Diagram: Hitting Set Duality
+    \begin{center}
+    \begin{tikzpicture}[
+        node distance=3cm,
+        setnode/.style={circle, draw, thick, minimum size=1.5cm, align=center, font=\small\bfseries},
+        arrow/.style={<->, >=Stealth, thick, draw=black!70}
+    ]
+        \node[setnode, fill=blue!10, draw=blue!80] (axp) {$\mathbb{A}_w$\\ (All AXps)};
+        \node[setnode, fill=red!10, draw=red!80, right=of axp] (cxp) {$\mathbb{C}_w$\\ (All CXps)};
+        
+        \draw[arrow] (axp) -- node[above, font=\small\itshape] {Minimal Hitting Set} node[below, font=\small\itshape] {Duality} (cxp);
+        
+        % Little floating text blocks to explain what they do
+        \node[below=0.2cm of axp, font=\footnotesize, text width=2cm, align=center] {Fixes indices to\\ lock prediction};
+        \node[below=0.2cm of cxp, font=\footnotesize, text width=2cm, align=center] {Frees indices to\\ flip prediction};
+    \end{tikzpicture}
+    \end{center}
+\end{frame} 
+
+\begin{frame}{Outcomes: Enumeration \& Milestone}
+    \begin{itemize}
+        \item \textbf{Algorithmic Contribution:} 
+        \begin{itemize}
+            \item Leveraged this duality to develop algorithms for the formal \textbf{enumeration} of explanations in Finite Automata.
+            \item Successfully maps the abstract concepts of XAI onto rigorous formal language properties.
+        \end{itemize}
+        
+        \vspace{0.6cm}
+        
+        \begin{block}{Phase 1 Milestone Achieved}
+            \textbf{Status:} Completed.\\
+            \textbf{Output:} The formal definitions, duality proofs, and enumeration algorithms have been compiled and submitted to \textbf{ICALP 2026}.
+        \end{block}
+        
+        \vspace{0.4cm}
+        \item \textit{Transitioning to Phase 2:} With the baseline for regular languages established, we now scale the complexity to languages requiring memory.
+    \end{itemize}
+\end{frame}
+
+
+% \begin{frame}{Project Refinements Since Confirmation}
+%     \textbf{Refining the Scope and Methodology:}
+%     \vspace{0.3cm}
+    
+%     \begin{itemize}
+%         \item \textbf{Shift from Automata Execution to Grammar Membership:}
+%         \begin{itemize}
+%             \item \textit{Initial Concept:} Explaining the execution trace and stack states of Pushdown Automata (PDA).
+%             \item \textit{Refinement:} Framed the problem purely around \textbf{CFG membership} ($w \in L(G)$). This allows us to leverage efficient grammar-based parsing algorithms (like CYK) rather than tracking infinite PDA states.
+%         \end{itemize}
+        
+%         \vspace{0.3cm}
+        
+%         \item \textbf{Targeted Probabilistic Scope:}
+%         \begin{itemize}
+%             \item \textit{Initial Concept:} Broad application to generic stochastic models.
+%             \item \textit{Refinement:} Narrowed the final phase to focus specifically on Probabilistic Context-Free Grammars (PCFGs) and Markov Models, ensuring the mathematical foundation built in Phase 2 scales directly into Phase 3.
+%         \end{itemize}
+%     \end{itemize}
+% \end{frame}
