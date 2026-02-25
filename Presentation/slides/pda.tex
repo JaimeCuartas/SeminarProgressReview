@@ -40,6 +40,7 @@ error: expected '}' at end of input
 
 \end{frame}
 
+\section{Current Research: Explaining CFGs}
 
 \begin{frame}{Explaining Context-Free Grammars}
     \begin{itemize}
@@ -55,4 +56,125 @@ error: expected '}' at end of input
         B &\to \texttt{(} \, \texttt{)} & \text{(Rule 4)}
     \end{aligned}
     \end{equation}
+\end{frame}
+
+\begin{frame}{Framing the CFG Problem}
+    \begin{itemize}
+        \item \textbf{The New Classifier:} We frame Context-Free Grammar (CFG) membership as our decision model. 
+        \item For a grammar $G$ and an input word $w$:
+        \begin{itemize}
+            \item \textbf{Accept:} $w \in L(G)$ (Valid syntax)
+            \item \textbf{Reject:} $w \notin L(G)$ (Syntax error)
+        \end{itemize}
+        \vspace{0.3cm}
+        \item \textbf{The Explanation Goal:} 
+        \begin{itemize}
+            \item Extract an \textbf{AXp}: The minimal subset of tokens that guarantees the current syntax status.
+            \item Extract a \textbf{CXp}: The minimal subset of tokens to free (replace with $\Sigma$) to flip the syntax status.
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Fragility of Acceptance vs. Robustness of Rejection}
+    In Context-Free Languages (like balanced parentheses):
+    
+    \vspace{0.3cm}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \textbf{Accepted Words are Fragile:}
+            \begin{itemize}
+                \item $w = \texttt{()()}$
+                \item \texttt{color()}
+                \item \textcolor{fgcolor}{text}
+                %\item Changing \textit{any} single token destroys the balance.
+                %\item Every single index is a valid CXp.
+            \end{itemize}
+        \end{column}
+        
+        \begin{column}{0.48\textwidth}
+            \textbf{Rejected Words are Robust:}
+            \begin{itemize}
+                \item $w = \texttt{))))}$
+                \item \textcolor{red}{\texttt{\underline{((}}}\texttt{))},
+                \textcolor{red}{\texttt{\underline{(}}}\texttt{)}\textcolor{red}{\texttt{\underline{(}}}\texttt{)}
+            \end{itemize}
+        \end{column}
+    \end{columns}
+    
+    \vspace{0.4cm}
+    \textit{Challenge:} How do we formally extract these complex, coordinated CXps for rejected words?
+\end{frame}
+
+\begin{frame}{Methodology: The Modified CYK Algorithm}
+    \begin{itemize}
+        \item To verify if a set of indices $S$ is a valid CXp, we must check if replacing those tokens with wildcards ($\Sigma$) allows the word to be accepted.
+        \item We achieve this by modifying the base case of the \textbf{CYK Parsing Algorithm}:
+    \end{itemize}
+    
+    \vspace{0.2cm}
+    \begin{block}{Modified Base Case Initialization}
+        For each token $w_i$ at index $i$:
+        \begin{itemize}
+            \item \textbf{If $i \notin S$ (Fixed):} $T[i,i] = \{A \in V \mid A \to w_i\}$
+            \item \textbf{If $i \in S$ (Freed/Wildcard):} $T[i,i] = \{A \in V \mid \exists \alpha \in \Sigma, A \to \alpha\}$
+        \end{itemize}
+    \end{block}
+    
+    \vspace{0.2cm}
+    \small{\textit{Result: If the Start symbol $S$ appears at the top of the table $T[1,n]$, then the candidate set $S$ is a valid CXp.}}
+\end{frame}
+
+% --- SLIDE 4 ---
+\begin{frame}{Visualizing Extraction: Greedy Deletion}
+    \textbf{Algorithm Insight:} We start by freeing the \textit{entire} word, then greedily lock tokens back into place one by one. If locking a token breaks the parsing, it belongs in our minimal CXp.
+
+    \vspace{0.3cm}
+    \textbf{Example: $w = \texttt{))))}$, checking CXp candidate $S = \{1, 2\}$}
+    
+    % A simplified visual of the CYK bottom row to avoid overwhelming the slide
+    \begin{center}
+    \begin{tikzpicture}[
+        cell/.style={rectangle, draw, minimum width=1.5cm, minimum height=0.8cm, align=center, font=\small},
+        lbl/.style={font=\footnotesize\ttfamily}
+    ]
+        % Base row nodes
+        \node[cell, fill=red!10] (c1) {\{L, R\}};
+        \node[cell, fill=red!10, right=0cm of c1] (c2) {\{L, R\}};
+        \node[cell, right=0cm of c2] (c3) {\{R\}};
+        \node[cell, right=0cm of c3] (c4) {\{R\}};
+        
+        % Labels below
+        \node[lbl, below=0.1cm of c1] {$w_1 = \Sigma$};
+        \node[lbl, below=0.1cm of c2] {$w_2 = \Sigma$};
+        \node[lbl, below=0.1cm of c3] {$w_3 = \texttt{)}$};
+        \node[lbl, below=0.1cm of c4] {$w_4 = \texttt{)}$};
+        
+        % Annotation
+        %\node[above=0.3cm of c1, font=\footnotesize\color{red!70!black}, xshift=0.75cm] {Freed indices act as wildcards};
+        \node[above=0.3cm of c1, font=\footnotesize\color{red!70!black}, xshift=0.75cm] {Wildcards};
+        \node[above=0.3cm of c3, font=\footnotesize\color{blue!70!black}, xshift=0.75cm] {Fixed indices lock to $R \to \texttt{)}$};
+    \end{tikzpicture}
+    \end{center}
+    
+    \vspace{0.1cm}
+    \small{Because indices 1 and 2 can now act as \texttt{L} ($L \to \texttt{(}$), the CYK table successfully resolves to the Start variable, proving $\{1, 2\}$ is a valid explanation.}
+\end{frame}
+
+% --- SLIDE 5 ---
+\begin{frame}{Current Status: CFG Explanations}
+    \begin{itemize}
+        \item \textbf{Theoretical Foundation:} 
+        \begin{itemize}
+            \item Formalized the extension of AXps/CXps to Context-Free Languages.
+            \item Proved the correctness of the Modified CYK approach for wildcard evaluation.
+        \end{itemize}
+        \vspace{0.3cm}
+        \item \textbf{Algorithmic Implementation:}
+        \begin{itemize}
+            \item Currently implementing the greedy extraction algorithm (\textsc{ExtractCXp}).
+            \item Testing extraction performance on standard balanced parenthesis (Dyck) languages.
+        \end{itemize}
+        \vspace{0.3cm}
+        \item \textbf{Next Immediate Step:} Benchmarking the computational complexity of the CYK-based extraction and drafting the manuscript for this second phase of the thesis.
+    \end{itemize}
 \end{frame}
