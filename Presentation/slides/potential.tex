@@ -1,7 +1,7 @@
 
 \begin{frame}{The Minimal Hitting Set Duality}
     \begin{itemize}
-        \item \textbf{The Core Relationship:} Abductive and contrastive explanations share a formal duality \cite{axpcxp}.
+        \item \textbf{The Core Relationship:} Abductive and contrastive explanations share a duality \cite{axpcxp}.
         \item Every AXp is a minimal hitting set of the complete set of CXps, and vice versa.
         \item To flip a prediction (CXp), you must free at least one token from every reason that guarantees the current prediction (AXp).
     \end{itemize}
@@ -68,3 +68,252 @@
 %         \end{itemize}
 %     \end{itemize}
 % \end{frame}
+
+\begin{frame}
+    Why $L=\{a^{n}b^{n} \mid n \geq 1\}$ cannot
+    be described by a FA?
+
+    \textbf{Intuition:}
+    Finite Automata cannot count arbitrarily high because they have no external memory (like a stack).
+
+    \textbf{Pumping Lemma for Regular Languages:}
+    For any regular language,
+    there is a ``pumping length'' $p$.
+    If a string in the language is longer than $p$,
+    the FA will get into a loop.
+
+    If we assume $L=\{a^{n}b^{n} \mid n \geq 1\}$
+    is regular, we could take a word $a^pb^p$.
+    The FA must loop while reading the a's.
+    This means we could "pump" (repeat) that loop of a's,
+    generating a word like $a^{p+k}b^p$.
+    
+    The FA would still accept this new word because
+    it uses the exact same path to reach the accepting
+    state, but $a^{p+k}b^p$ breaks the $n=n$ rule.
+
+    It leads to a contradiction, proving $L$ is not
+    regular and cannot be described by an FA.
+\end{frame}
+
+
+\begin{frame}{Methodology: Parsing a word}
+    \begin{itemize}
+        \item The CYK algorithm requires the grammar to be in \textbf{Chomsky Normal Form} (CNF).
+        \item Every rule is either $A \to BC$ (two variables) or $A \to a$ (one terminal).
+        %\item This binary branching is what allows the bottom-up dynamic programming table to function.
+    \end{itemize}
+
+    \vspace{0.4cm}
+
+    \begin{columns}[T]
+        % Left Column: Original Grammar
+        \begin{column}{0.48\textwidth}
+            \textbf{Original Grammar ($G$):}
+            \begin{equation*}
+            \begin{aligned}
+                B &\to \texttt{(} \, B \, \texttt{)} \, B \\
+                B &\to \texttt{(} \, B \, \texttt{)} \\
+                B &\to \texttt{(} \, \texttt{)} \, B \\
+                B &\to \texttt{(} \, \texttt{)}
+            \end{aligned}
+            \end{equation*}
+        \end{column}
+
+        % Right Column: CNF Grammar
+        \begin{column}{0.48\textwidth}
+            \textbf{Converted CNF ($G'$):}
+            \begin{equation*}
+            \begin{aligned}
+                B &\to N \, B & N &\to U \, R & L&\to \texttt{(}\\
+                B &\to U \, R & U &\to L \, B & R&\to \texttt{)}\\
+                B &\to P \, B & P &\to L \, R\\
+                B &\to L \, R 
+            \end{aligned}
+            \end{equation*}
+        \end{column}
+    \end{columns}
+    
+    \vspace{0.4cm}
+    \small{\textit{Note: We introduce variables $L$ and $R$ for the terminals, and helper variables ($N, U, P$) to break down rules longer than two symbols.}}
+\end{frame}
+
+\begin{frame}{The CYK Algorithm: Bottom-Up Parsing}
+    \textbf{Input Word:} $w = \texttt{(())}$
+    
+    \vspace{0.2cm}
+    
+    \begin{columns}[T]
+        \begin{column}{0.35\textwidth}
+            \textbf{CNF Grammar:}
+            \begin{equation*}
+            \begin{aligned}
+                B &\to N B \mid U R \mid P B \mid L R \\
+                N &\to U R \quad U \to L B \quad P \to L R\\
+                L &\to \texttt{(} \\
+                R &\to \texttt{)}
+            \end{aligned}
+            \end{equation*}
+        \end{column}
+        
+        \begin{column}{0.65\textwidth}
+            \begin{center}
+            \scalebox{0.85}{
+            \begin{tikzpicture}[
+                cell/.style={rectangle, draw, minimum width=1.2cm, minimum height=0.8cm, align=center, font=\small},
+                lbl/.style={font=\footnotesize\ttfamily, text height=1.5ex, text depth=0.25ex}
+            ]
+                % Row 1 (Bottom - Length 1)
+                \node[cell] (11) at (0,0) {\{L\}};
+                \node[cell] (22) at (1.2,0) {\{L\}};
+                \node[cell] (33) at (2.4,0) {\{R\}};
+                \node[cell, fill=blue!10] (44) at (3.6,0) {\{R\}};
+                
+                % Labels below
+                \node[lbl, below=0.1cm of 11] {$w_1 = \texttt{(}$};
+                \node[lbl, below=0.1cm of 22] {$w_2 = \texttt{(}$};
+                \node[lbl, below=0.1cm of 33] {$w_3 = \texttt{)}$};
+                \node[lbl, below=0.1cm of 44] {$w_4 = \texttt{)}$};
+
+                % Row 2 (Length 2)
+                \node[cell] (12) at (0.6, 0.8) {$\emptyset$};
+                \node[cell] (23) at (1.8, 0.8) {\{B,P\}};
+                \node[cell] (34) at (3.0, 0.8) {$\emptyset$};
+
+                % Row 3 (Length 3)
+                \node[cell, fill=blue!10] (13) at (1.2, 1.6) {\{U\}};
+                \node[cell] (24) at (2.4, 1.6) {$\emptyset$};
+
+                % Row 4 (Top - Length 4)
+                \node[cell, fill=green!20] (14) at (1.8, 2.4) {\{S\}};
+                
+            \end{tikzpicture}
+            }
+            \end{center}
+        \end{column}
+    \end{columns}
+    
+    \vspace{0.4cm}
+    \small{
+    \textbf{Step 1:} Initialize the base row using terminal rules ($L \to \texttt{(}$, $R \to \texttt{)}$). \\
+    \textbf{Step 2:} Build upward. E.g., cell \{X\} is formed because $X \to SR$, matching \{S\} and \{R\} below it. \\
+    \textbf{Step 3:} The word is accepted because the Start variable $S$ appears in the top cell!
+    }
+\end{frame}
+
+
+\begin{frame}{Probabilistic Resolution of Ambiguity}
+    \begin{columns}[T]
+        % Bottom Left: Hypothesis A
+        \begin{column}{0.5\textwidth}
+            \begin{center}
+                \scalebox{0.55}{
+                \begin{tikzpicture}[
+                    thick,
+                    level distance=12mm,
+                    level 1/.style={sibling distance=35mm},
+                    level 2/.style={sibling distance=20mm},
+                    level 3/.style={sibling distance=12mm},
+                    level 4/.style={sibling distance=10mm},
+                    every node/.style={font=\small}
+                ]
+                  \node {$B$}
+                    child {node {N}
+                      child {node {U}
+                        child {node {$\mathbf{L}$} child {node {\texttt{(}}}}
+                        child {node {$B$} 
+                            child {node {$\mathbf{L}$} child {node {\texttt{(}}}} 
+                            child {node {$\mathbf{R}$} child {node {\texttt{)}}}} 
+                        }
+                      }
+                      child {node {$\mathbf{R}$} child {node {\texttt{)}}}}
+                    }
+                    child {node {$B$}
+                      child {node {$\mathbf{L}$} child {node {\texttt{(}}}}
+                      child {node {$\mathbf{R}$} child {node {\texttt{)}}}}
+                    };
+                \end{tikzpicture}
+                }
+            \end{center}
+        \end{column}
+
+        \begin{column}{0.5\textwidth}
+            \begin{center}
+                \scalebox{0.55}{
+                \begin{tikzpicture}[
+                    thick,
+                    level distance=12mm,
+                    level 1/.style={sibling distance=35mm},
+                    level 2/.style={sibling distance=20mm},
+                    level 3/.style={sibling distance=12mm},
+                    level 4/.style={sibling distance=10mm},
+                    every node/.style={font=\small}
+                ]
+                  \node {$B$}
+                    child {node {P} 
+                        child {node {$\mathbf{L}$} child {node {\texttt{(}}}} 
+                        child {node {$\mathbf{R}$} child {node {\texttt{)}}}} 
+                    }
+                    child {node {$B$}
+                      child {node {U}
+                        child {node {$\mathbf{L}$} child {node {\texttt{(}}}}
+                        child {node {$B$} 
+                            child {node {$\mathbf{L}$} child {node {\texttt{(}}}} 
+                            child {node {$\mathbf{R}$} child {node {\texttt{)}}}} 
+                        }
+                      }
+                      child {node {$\mathbf{R}$} child {node {\texttt{)}}}}
+                    };
+                \end{tikzpicture}
+                }
+            \end{center}
+        \end{column}
+    \end{columns}
+    \begin{columns}[T]
+        \begin{column}{0.5\textwidth}
+            \vspace{0.1cm}
+            \begin{center}
+            \scalebox{0.55}{
+                \begin{tikzpicture}[
+                    thick,
+                    level distance=12mm,
+                    level 1/.style={sibling distance=35mm},
+                    level 2/.style={sibling distance=20mm},
+                    level 3/.style={sibling distance=12mm},
+                    every node/.style={font=\small}
+                ]
+                  \node {$B$}
+                    child { node {P}
+                        child { node {$\mathbf{L}$} child {node {\texttt{(}}} }
+                        child { node {$\mathbf{R}$} child {node {\texttt{)}}} }
+                    }
+                    child { node {$B$}
+                        child { node {P}
+                            child { node {$\mathbf{L}$} child {node {\texttt{(}}} }
+                            child { node {$\mathbf{R}$} child {node {\texttt{)}}} }
+                        }
+                        child { node {$B$}
+                            child { node {$\mathbf{L}$} child {node {\texttt{(}}} }
+                            child { node {$\mathbf{R}$} child {node {\texttt{)}}} }
+                        }
+                    };
+                \end{tikzpicture}
+            }
+            \end{center}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \vspace{0.2cm}
+            \scalebox{0.75}{
+                \renewcommand{\arraystretch}{1.2}
+                \begin{tabular}{lcc}
+                \hline
+                \textbf{Rule} & \textbf{Count} & \textbf{Probability ($P$)} \\ \hline
+                $B \to \mathbf{L} \ \mathbf{R}$     & 4 & $4/9 = 44.\overline{4}\%$ \\
+                $B \to \text{P } B$              & 3 & $3/9 = 33.\overline{3}\%$ \\
+                $B \to \text{N } B$            & 1 & $1/9 = 11.\overline{1}\%$ \\
+                $B \to \text{U } \mathbf{R}$ & 1 & $1/9 = 11.\overline{1}\%$ \\ \hline
+                \end{tabular}
+            }
+        \end{column}
+    \end{columns}
+\end{frame}
