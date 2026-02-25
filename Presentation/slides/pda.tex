@@ -42,41 +42,6 @@ error: expected '}' at end of input
 
 \section{Current Research: Explaining CFGs}
 
-% \begin{frame}{Explaining Context-Free Grammars}
-%     \begin{itemize}
-%         \item Transition to Context-Free Grammars (CFGs).
-%         \item Consider $G=(\{B, L, R\}, \{\texttt{(},\texttt{)}\}, R, B)$ for balanced parentheses, with rules $R$:
-%     \end{itemize}
-%     %
-%     \begin{equation}
-%     \begin{aligned}
-%         B &\to \textbf{L} \, B \, \textbf{R} \, B & \text{(Rule 1)}\\
-%         B &\to \textbf{L} \, B \, \textbf{R} & \text{(Rule 2)}\\
-%         B &\to \textbf{L} \, \textbf{R} \, B & \text{(Rule 3)}\\
-%         B &\to \textbf{L} \, \textbf{R} & \text{(Rule 4)}\\
-%         \textbf{L} &\to \texttt{(} & \text{(Unary Rule 1)}\\
-%         \textbf{R} &\to \texttt{)} & \text{(Unary Rule 2)}
-%     \end{aligned}
-%     \end{equation}
-% \end{frame}
-
-% \begin{frame}{Framing the CFG Problem}
-%     \begin{itemize}
-%         \item \textbf{The New Classifier:} We frame Context-Free Grammar (CFG) membership as our decision model. 
-%         \item For a grammar $G$ and an input word $w$:
-%         \begin{itemize}
-%             \item \textbf{Accept:} $w \in L(G)$ (Valid syntax)
-%             \item \textbf{Reject:} $w \notin L(G)$ (Syntax error)
-%         \end{itemize}
-%         \vspace{0.3cm}
-%         \item \textbf{The Explanation Goal:} 
-%         \begin{itemize}
-%             \item Extract an \textbf{AXp}: The minimal subset of tokens that guarantees the current syntax status.
-%             \item Extract a \textbf{CXp}: The minimal subset of tokens to free (replace with $\Sigma$) to flip the syntax status.
-%         \end{itemize}
-%     \end{itemize}
-% \end{frame}
-
 \begin{frame}{Fragility of Acceptance vs. Robustness of Rejection}
     In Context-Free Languages (like balanced parentheses):
     
@@ -110,53 +75,7 @@ error: expected '}' at end of input
     \emph{Challenge:} How do we formally extract these explanations?
 \end{frame}
 
-% \begin{frame}{The Modified CYK Approach}
-%     \begin{itemize}
-%         \item \textbf{The Goal:} Verify if a candidate set of indices $S$ is a valid Contrastive Explanation.
-%         %\item \textbf{The Innovation:} We modify the \textbf{base case} initialization of the CYK parsing table. Tokens in $S$ are ``freed'' (act as wildcards), while the others remain ``fixed''.
-%     \end{itemize}
-    
-%     \vspace{0.4cm}
-    
-%     \textbf{Example:} Rejected word $w = \texttt{))))}$. Test candidate $S = \{1, 2\}$.
-    
-%     \vspace{0.2cm}
-    
-%     \begin{center}
-%         \scalebox{0.9}{
-%         \begin{tikzpicture}[
-%             cell/.style={rectangle, draw, minimum width=1.6cm, minimum height=0.8cm, align=center, font=\small},
-%             lbl/.style={font=\footnotesize\ttfamily, text height=1.5ex, text depth=0.25ex},
-%             % FIX: Added 'text depth=0.5ex' so descenders (like 'y') don't shift the height
-%             note/.style={font=\footnotesize, align=center, text depth=0.5ex} 
-%         ]
-%             % Base row nodes
-%             \node[cell, fill=red!10, draw=red!80!black] (c1) {\{L, R\}};
-%             \node[cell, fill=red!10, draw=red!80!black, right=0cm of c1] (c2) {\{L, R\}};
-%             \node[cell, fill=blue!10, draw=blue!80!black, right=0cm of c2] (c3) {\{R\}};
-%             \node[cell, fill=blue!10, draw=blue!80!black, right=0cm of c3] (c4) {\{R\}};
-            
-%             % Labels below
-%             \node[lbl, below=0.1cm of c1] {$w_1 \to \Sigma$};
-%             \node[lbl, below=0.1cm of c2] {$w_2 \to \Sigma$};
-%             \node[lbl, below=0.1cm of c3] {$w_3 = \texttt{)}$};
-%             \node[lbl, below=0.1cm of c4] {$w_4 = \texttt{)}$};
-            
-%             % Annotations above
-%             \draw[<-, thick, draw=red!70!black] (c1.north) ++(0.8,0) -- ++(0, 0.4) node[above, note, text=red!70!black] {Freed ($i \in S$):\\Generate any terminal};
-%             \draw[<-, thick, draw=blue!70!black] (c3.north) ++(0.8,0) -- ++(0, 0.4) node[above, note, text=blue!70!black] {Fixed ($i \notin S$):\\Match exact token};
-
-%         \end{tikzpicture}
-%         }
-%     \end{center}
-    
-%     \vspace{0.6cm}
-%     \small{
-%         \textit{Result:} Because the first two indices can now act as \texttt{L} ($L \to \texttt{(}$), the standard CYK recursion will successfully derive the Start variable at the top, proving $\{1, 2\}$ is a valid explanation.
-%     }
-% \end{frame}
-
-\begin{frame}{The Modified CYK Approach}
+\begin{frame}{Methodology: The Modified CYK Algorithm}
     \begin{itemize}
         \item \textbf{The Goal:} Verify if a candidate set $S$ is a valid CXp.
         %\item \textbf{The Innovation:} We modify the \textbf{base case} initialization. Freed tokens generate any terminal; fixed tokens must match exactly.
@@ -337,11 +256,41 @@ error: expected '}' at end of input
     \end{columns}
 
     \begin{center}
-        \small{\textbf{Conclusion:} The algorithm prioritizes \texttt{(())} as a better correction for \texttt{))))}.}
+        \small{\textbf{Conclusion:} 
+        \textcolor{red}{\texttt{(}}\texttt{)}\textcolor{red}{\texttt{(}}\texttt{)} is a more common structure than \textcolor{red}{\texttt{((}}\texttt{))}.
+        Thus, a better correction for \texttt{))))}.}
     \end{center}
 \end{frame}
 
-\begin{frame}{Feature Attribution: The Ambiguity Problem}
+% \begin{frame}{Future work for AXps}
+%     \begin{block}{Abductive Explanations (Errors)}
+%         $w = \texttt{))))}$ \\
+%         \vspace{0.1cm}
+%         \textcolor{blue}{\texttt{\underline{)}}}\texttt{)))},
+%         \texttt{)}\textcolor{blue}{\texttt{\underline{))}}}\texttt{)}
+%     \end{block}
+
+%     \vspace{0.4cm}
+    
+%     % The transition block
+%     \begin{center}
+%     \begin{tikzpicture}[
+%         box/.style={rectangle, draw=black!50, fill=yellow!10, rounded corners, thick, text width=10cm, align=center, inner sep=6pt}
+%     ]
+%         \node[box] {
+%             \textbf{Future Work:}\\
+%             If \textcolor{red}{\texttt{(}}\texttt{)}\textcolor{red}{\texttt{(}}\texttt{)} is a more common structure than \textcolor{red}{\texttt{((}}\texttt{))}.
+%             We can weigh these contrastive explanations using \textbf{Probabilistic CFGs (PCFGs)}.
+            
+%             \textbf{The Open Question:}
+%             How can we prioritize AXps?
+%         };
+%     \end{tikzpicture}
+%     \end{center}
+
+% \end{frame}
+
+\begin{frame}{Future work for AXps}
     \begin{block}{Abductive Explanations (Errors)}
         $w = \texttt{))))}$ \\
         \vspace{0.1cm}
@@ -357,132 +306,188 @@ error: expected '}' at end of input
         box/.style={rectangle, draw=black!50, fill=yellow!10, rounded corners, thick, text width=10cm, align=center, inner sep=6pt}
     ]
         \node[box] {
-            \textbf{Future Work:}\\
-            If \textcolor{red}{\texttt{(}}\texttt{)}\textcolor{red}{\texttt{(}}\texttt{)} is a more common structure than \textcolor{red}{\texttt{((}}\texttt{))}.
-            We can weigh these contrastive explanations using \textbf{Probabilistic CFGs (PCFGs)}.
-            
-            \textbf{The Open Question:}
-            How can we prioritize AXps?
+            \textbf{The Open Question:}\\
+            How can we prioritise \textbf{Abductive Explanations}? \\
+            Is a structural failure at index 1 probabilistically "worse" than a failure at indices 2 and 3?
         };
     \end{tikzpicture}
     \end{center}
-
 \end{frame}
 
-% \begin{frame}{Methodology: The CYK Algorithm}
+
+% Up to this point, we have solved explanations for deterministic systems, and we are currently using PCFGs to handle structural ambiguity. But this acts as a bridge to the ultimate goal of my research: explaining AI in dynamic, stochastic environments. >
+% In the real world, like in Markov Decision Processes or reinforcement learning, actions don't have guaranteed outcomes. If an AI agent takes an action, it might succeed 80% of the time and fail 20% of the time. In these environments, an explanation can no longer be an absolute guarantee. A Contrastive Explanation must evolve into a probabilistic bound—for example, 'Changing this specific action is the minimal intervention required to raise your success rate above 95%.'
+
+% This leaves us with exciting open questions for the final phase of my thesis: How do we extract minimal explanations over infinitely unrolling, uncertain trajectories? And how can we adapt the parsing algorithms we've built for Grammars to evaluate these dynamic behaviors?
+\begin{frame}{Future Work: Explaining Stochastic Environments}
+    \begin{itemize}
+        \item PCFGs introduce probabilities to static sequences.
+        The ultimate goal of this thesis is to scale these formalisms to explain AI in \textbf{dynamic, stochastic environments}.
+    \end{itemize}
+
+    \vspace{0.1cm}
+    \begin{columns}[T]
+        % LEFT COLUMN: The Environment
+        \begin{column}{0.48\textwidth}
+            \textbf{What is a Stochastic Environment?}\\
+            \vspace{0.1cm}
+            \small{Systems (like MDPs) where executing an action $a$ yields a probability distribution over future states.}\\
+            \begin{center}
+            \scalebox{0.75}{
+            \begin{tikzpicture}[->, >=stealth, node distance=1.5cm, thick]
+                \node[circle, draw, minimum size=0.8cm] (s0) {$s_0$};
+                \node[circle, draw, fill=green!10, right=2cm of s0, yshift=0.8cm, minimum size=0.8cm] (s1) {$s_1$};
+                \node[circle, draw, fill=red!10, right=2cm of s0, yshift=-0.8cm, minimum size=0.8cm] (s2) {$s_2$};
+
+                \draw (s0) -- node[above, sloped, font=\footnotesize] {$a$ ($80\%$)} (s1);
+                \draw (s0) -- node[below, sloped, font=\footnotesize] {$a$ ($20\%$)} (s2);
+            \end{tikzpicture}
+            }
+            \end{center}
+        \end{column}
+
+        % RIGHT COLUMN: The Explanation
+        \begin{column}{0.48\textwidth}
+            \textbf{What does an explanation look like?}\\
+            \vspace{0.1cm}
+            \small{Explanations shift from absolute logical guarantees to probabilistic bounds.}
+            
+            \textbf{The Open Questions:}
+            \begin{itemize}
+                \item How do we define minimality for AXps/CXps when trajectories are infinite and outcomes are uncertain?
+            \end{itemize}
+            % \begin{block}{Stochastic CXp Example}
+            %     \footnotesize{``Changing policy action $a_1$ to $a_2$ increases the probability of reaching a safe state from $40\%$ to $\geq 95\%$.''}
+            % \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+
+
+\section{Project Management}
+
+
+\begin{frame}{Project Plan \& Timeline}
+    \textbf{Objective:} Timely completion of Phase 3 and thesis write-up.
+    
+    \vspace{0.4cm}
+    \begin{center}
+    \scalebox{0.75}{ % Essential for keeping the chart on the slide
+    \begin{ganttchart}[
+        y unit title=0.5cm,
+        y unit chart=0.6cm,
+        x unit=0.25cm,
+        vgrid={*{5}{draw=none}, dotted}, % Fixed syntax for the grid
+        hgrid,
+        time slot format=isodate-yearmonth,
+        time slot unit=month,
+        title/.append style={shape=rectangle, fill=black!10},
+        title height=1,
+        bar/.append style={fill=green!70!black, rounded corners=1pt}, % Darkened for projector contrast
+        bar height=.6,
+        bar label font=\normalsize\color{black!90},
+        group top shift=.6,
+        group height=.3,
+        group peaks height=.2
+      ]{2024-01}{2027-06}
+      
+      \gantttitlecalendar{year} \\
+      \ganttbar{Changing Supervisors}{2024-01}{2024-05} \\
+      \ganttbar{Literature Review}{2024-05}{2027-06} \\
+      \ganttbar{Explaining FA}{2024-06}{2025-06} \\
+      \ganttbar{Explaining CFG}{2025-03}{2026-03} \\
+      \ganttbar{Explaining Stochastic Models}{2026-03}{2026-12} \\
+      \ganttbar{Thesis write-up}{2027-01}{2027-06}
+      
+    \end{ganttchart}
+    }
+    \end{center}
+    
+    \vspace{0.4cm}
+    \small{\textit{Feasibility Note:} The mathematical duality established in Phase 1 provides a robust foundation that drastically reduces the exploratory overhead for Phases 2 and 3.}
+\end{frame}
+
+\begin{frame}{Resources \& Skills Training}    
+    \vspace{0.6cm}
+    \begin{center}
+        \Large{\textbf{Thank You}}\\
+        \normalsize{Questions?}
+    \end{center}
+\end{frame}
+
+% \begin{frame}{Methodology: The Modified CYK Algorithm}
 %     \begin{itemize}
-%         \item To verify if a word $w$ belongs to a Context-Free Language.
+%         \item To verify if a set of indices $S$ is a valid CXp, we must check if replacing those tokens with wildcards ($\Sigma$) allows the word to be accepted.
+%         \item We achieve this by modifying the base case of the \textbf{CYK Parsing Algorithm}:
 %     \end{itemize}
     
 %     \vspace{0.2cm}
-
-%     \begin{center}
-%         \renewcommand{\arraystretch}{1.3}
-%         \begin{tabular}{|c|c|c|c|}
-%         \hline
-%         \{L\} & \{B,P\} & $\emptyset$ & \textbf{\{B\}} \\ \cline{1-4}
-
-%         \multicolumn{1}{c|}{$w_1=`('$} & \{R\} & $\emptyset$ & $\emptyset$ \\ \cline{2-4}
-
-%         \multicolumn{1}{c}{} & \multicolumn{1}{c|}{$w_2=`)'$} & \{L\} & \{B,P\} \\ \cline{3-4}
-
-%         \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c|}{$w_3=`('$} & $w_4=`)'$ \{R\} \\ \cline{4-4}
-
-%         \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{$w_4=`)'$} \\
-
-%         \end{tabular}
-%     \end{center}
-%     \begin{center}
-%         \renewcommand{\arraystretch}{1.3}
-%         \begin{tabular}{|c|c|c|c|}
-%         \hline
-%         \{L\} & \{B,P\} & $\emptyset$ & \textbf{\{B\}} \\ \cline{1-4}
-
-%         \multicolumn{1}{c|}{$w_1=`)'$} & \{R\} & $\emptyset$ & $\emptyset$ \\ \cline{2-4}
-
-%         \multicolumn{1}{c}{} & \multicolumn{1}{c|}{$w_2=`)'$} & \{L\} & \{B,P\} \\ \cline{3-4}
-
-%         \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c|}{$w_3=`)'$} & $w_4=`)'$ \{R\} \\ \cline{4-4}
-
-%         \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{$w_4=`)'$} \\
-
-%         \end{tabular}
-%     \end{center}
+%     \begin{block}{Modified Base Case Initialization}
+%         For each token $w_i$ at index $i$:
+%         \begin{itemize}
+%             \item \textbf{If $i \notin S$ (Fixed):} $T[i,i] = \{A \in V \mid A \to w_i\}$
+%             \item \textbf{If $i \in S$ (Freed/Wildcard):} $T[i,i] = \{A \in V \mid \exists \alpha \in \Sigma, A \to \alpha\}$
+%         \end{itemize}
+%     \end{block}
+    
+%     \vspace{0.2cm}
+%     \small{\textit{Result: If the Start symbol $S$ appears at the top of the table $T[1,n]$, then the candidate set $S$ is a valid CXp.}}
 % \end{frame}
 
 
-\begin{frame}{Methodology: The Modified CYK Algorithm}
-    \begin{itemize}
-        \item To verify if a set of indices $S$ is a valid CXp, we must check if replacing those tokens with wildcards ($\Sigma$) allows the word to be accepted.
-        \item We achieve this by modifying the base case of the \textbf{CYK Parsing Algorithm}:
-    \end{itemize}
+
+% \begin{frame}{Visualizing Extraction: Greedy Deletion}
+%     \textbf{Algorithm Insight:} We start by freeing the \textit{entire} word, then greedily lock tokens back into place one by one. If locking a token breaks the parsing, it belongs in our minimal CXp.
+
+%     \vspace{0.3cm}
+%     \textbf{Example: $w = \texttt{))))}$, checking CXp candidate $S = \{1, 2\}$}
     
-    \vspace{0.2cm}
-    \begin{block}{Modified Base Case Initialization}
-        For each token $w_i$ at index $i$:
-        \begin{itemize}
-            \item \textbf{If $i \notin S$ (Fixed):} $T[i,i] = \{A \in V \mid A \to w_i\}$
-            \item \textbf{If $i \in S$ (Freed/Wildcard):} $T[i,i] = \{A \in V \mid \exists \alpha \in \Sigma, A \to \alpha\}$
-        \end{itemize}
-    \end{block}
-    
-    \vspace{0.2cm}
-    \small{\textit{Result: If the Start symbol $S$ appears at the top of the table $T[1,n]$, then the candidate set $S$ is a valid CXp.}}
-\end{frame}
-
-
-
-\begin{frame}{Visualizing Extraction: Greedy Deletion}
-    \textbf{Algorithm Insight:} We start by freeing the \textit{entire} word, then greedily lock tokens back into place one by one. If locking a token breaks the parsing, it belongs in our minimal CXp.
-
-    \vspace{0.3cm}
-    \textbf{Example: $w = \texttt{))))}$, checking CXp candidate $S = \{1, 2\}$}
-    
-    % A simplified visual of the CYK bottom row to avoid overwhelming the slide
-    \begin{center}
-    \begin{tikzpicture}[
-        cell/.style={rectangle, draw, minimum width=1.5cm, minimum height=0.8cm, align=center, font=\small},
-        lbl/.style={font=\footnotesize\ttfamily}
-    ]
-        % Base row nodes
-        \node[cell, fill=red!10] (c1) {\{L, R\}};
-        \node[cell, fill=red!10, right=0cm of c1] (c2) {\{L, R\}};
-        \node[cell, right=0cm of c2] (c3) {\{R\}};
-        \node[cell, right=0cm of c3] (c4) {\{R\}};
+%     % A simplified visual of the CYK bottom row to avoid overwhelming the slide
+%     \begin{center}
+%     \begin{tikzpicture}[
+%         cell/.style={rectangle, draw, minimum width=1.5cm, minimum height=0.8cm, align=center, font=\small},
+%         lbl/.style={font=\footnotesize\ttfamily}
+%     ]
+%         % Base row nodes
+%         \node[cell, fill=red!10] (c1) {\{L, R\}};
+%         \node[cell, fill=red!10, right=0cm of c1] (c2) {\{L, R\}};
+%         \node[cell, right=0cm of c2] (c3) {\{R\}};
+%         \node[cell, right=0cm of c3] (c4) {\{R\}};
         
-        % Labels below
-        \node[lbl, below=0.1cm of c1] {$w_1 = \Sigma$};
-        \node[lbl, below=0.1cm of c2] {$w_2 = \Sigma$};
-        \node[lbl, below=0.1cm of c3] {$w_3 = \texttt{)}$};
-        \node[lbl, below=0.1cm of c4] {$w_4 = \texttt{)}$};
+%         % Labels below
+%         \node[lbl, below=0.1cm of c1] {$w_1 = \Sigma$};
+%         \node[lbl, below=0.1cm of c2] {$w_2 = \Sigma$};
+%         \node[lbl, below=0.1cm of c3] {$w_3 = \texttt{)}$};
+%         \node[lbl, below=0.1cm of c4] {$w_4 = \texttt{)}$};
         
-        % Annotation
-        %\node[above=0.3cm of c1, font=\footnotesize\color{red!70!black}, xshift=0.75cm] {Freed indices act as wildcards};
-        \node[above=0.3cm of c1, font=\footnotesize\color{red!70!black}, xshift=0.75cm] {Wildcards};
-        \node[above=0.3cm of c3, font=\footnotesize\color{blue!70!black}, xshift=0.75cm] {Fixed indices lock to $R \to \texttt{)}$};
-    \end{tikzpicture}
-    \end{center}
+%         % Annotation
+%         %\node[above=0.3cm of c1, font=\footnotesize\color{red!70!black}, xshift=0.75cm] {Freed indices act as wildcards};
+%         \node[above=0.3cm of c1, font=\footnotesize\color{red!70!black}, xshift=0.75cm] {Wildcards};
+%         \node[above=0.3cm of c3, font=\footnotesize\color{blue!70!black}, xshift=0.75cm] {Fixed indices lock to $R \to \texttt{)}$};
+%     \end{tikzpicture}
+%     \end{center}
     
-    \vspace{0.1cm}
-    \small{Because indices 1 and 2 can now act as \texttt{L} ($L \to \texttt{(}$), the CYK table successfully resolves to the Start variable, proving $\{1, 2\}$ is a valid explanation.}
-\end{frame}
+%     \vspace{0.1cm}
+%     \small{Because indices 1 and 2 can now act as \texttt{L} ($L \to \texttt{(}$), the CYK table successfully resolves to the Start variable, proving $\{1, 2\}$ is a valid explanation.}
+% \end{frame}
 
 % --- SLIDE 5 ---
-\begin{frame}{Current Status: CFG Explanations}
-    \begin{itemize}
-        \item \textbf{Theoretical Foundation:} 
-        \begin{itemize}
-            \item Formalized the extension of AXps/CXps to Context-Free Languages.
-            \item Proved the correctness of the Modified CYK approach for wildcard evaluation.
-        \end{itemize}
-        \vspace{0.3cm}
-        \item \textbf{Algorithmic Implementation:}
-        \begin{itemize}
-            \item Currently implementing the greedy extraction algorithm (\textsc{ExtractCXp}).
-            \item Testing extraction performance on standard balanced parenthesis (Dyck) languages.
-        \end{itemize}
-        \vspace{0.3cm}
-        \item \textbf{Next Immediate Step:} Benchmarking the computational complexity of the CYK-based extraction and drafting the manuscript for this second phase of the thesis.
-    \end{itemize}
-\end{frame}
+% \begin{frame}{Current Status: CFG Explanations}
+%     \begin{itemize}
+%         \item \textbf{Theoretical Foundation:} 
+%         \begin{itemize}
+%             \item Formalized the extension of AXps/CXps to Context-Free Languages.
+%             \item Proved the correctness of the Modified CYK approach for wildcard evaluation.
+%         \end{itemize}
+%         \vspace{0.3cm}
+%         \item \textbf{Algorithmic Implementation:}
+%         \begin{itemize}
+%             \item Currently implementing the greedy extraction algorithm (\textsc{ExtractCXp}).
+%             \item Testing extraction performance on standard balanced parenthesis (Dyck) languages.
+%         \end{itemize}
+%         \vspace{0.3cm}
+%         \item \textbf{Next Immediate Step:} Benchmarking the computational complexity of the CYK-based extraction and drafting the manuscript for this second phase of the thesis.
+%     \end{itemize}
+% \end{frame}
 
