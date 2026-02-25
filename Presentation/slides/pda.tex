@@ -43,7 +43,7 @@ error: expected '}' at end of input
 \section{Current Research: Explaining CFGs}
 
 \begin{frame}{Fragility of Acceptance vs. Robustness of Rejection}
-    In Context-Free Languages. Consider balanced parentheses language $L=\{\texttt{()},\texttt{(())},\texttt{()()},\dots\}$:
+    In Context-Free Languages, consider the balanced parentheses language $L=\{\texttt{()},\texttt{(())},\texttt{()()},\dots\}$:
     
     \vspace{0.3cm}
     \begin{columns}[T]
@@ -91,10 +91,10 @@ error: expected '}' at end of input
             \small
             \begin{equation*}
             \begin{aligned}
-                B &\to \textbf{L} \, B \, \textbf{R} \, B & \text{(R1)}\\
-                B &\to \textbf{L} \, B \, \textbf{R} & \text{(R2)}\\
-                B &\to \textbf{L} \, \textbf{R} \, B & \text{(R3)}\\
-                B &\to \textbf{L} \, \textbf{R} & \text{(R4)}\\
+                B &\to \textbf{L} \, \textbf{R} & \text{(R1)}\\
+                B &\to \textbf{L} \, \textbf{R} \, B & \text{(R2)}\\
+                B &\to \textbf{L} \, B \, \textbf{R} & \text{(R3)}\\
+                B &\to \textbf{L} \, B \, \textbf{R} \, B & \text{(R4)}\\
                 \textbf{L} &\to \texttt{(} & \text{(U1)}\\
                 \textbf{R} &\to \texttt{)} & \text{(U2)}
             \end{aligned}
@@ -132,7 +132,7 @@ error: expected '}' at end of input
     
     \vspace{0.4cm}
     \small{
-        \textit{Result:} Now the first two indices can act as \texttt{(} via variable \textbf{L}.
+        Now the first two indices can act as \texttt{(} via variable \textbf{L}.
     }
 \end{frame}
 
@@ -143,7 +143,7 @@ error: expected '}' at end of input
     \end{itemize}
 
     \vspace{0.3cm}
-    \textbf{Example:} The rejected word $w = \texttt{))))}$, yields two valid minimal corrections:
+    \textbf{Example:} The rejected word $w = \texttt{))))}$ yields two valid minimal corrections:
     
     \vspace{0.2cm}
     \begin{columns}[T]
@@ -165,14 +165,14 @@ error: expected '}' at end of input
     \end{columns}
 
     \vspace{0.5cm}
-    \begin{itemize}
-        %\item \textbf{Future Work (Stochastic Models):} How do we know which correction the user actually intended?
-        \item By transitioning to \textbf{Probabilistic Context-Free Grammars (PCFGs)} trained on real-world datasets, we can assign likelihoods to grammar rules.
-        %\item \textbf{Goal:} Output not just \textit{a} formal explanation, but the \textit{most probabilistically responsible} explanation based on dataset distributions.
-    \end{itemize}
+    % \begin{itemize}
+    %     %\item \textbf{Future Work (Stochastic Models):} How do we know which correction the user actually intended?
+    %     \item By transitioning to \textbf{Probabilistic Context-Free Grammars (PCFGs)} trained on real-world datasets, we can assign likelihoods to grammar rules.
+    %     %\item \textbf{Goal:} Output not just \textit{a} formal explanation, but the \textit{most probabilistically responsible} explanation based on dataset distributions.
+    % \end{itemize}
 \end{frame}
 
-\begin{frame}{Deducing Responsibility with PCFGs}
+\begin{frame}{Priorities with PCFGs}
     \begin{itemize}
         \item By training a \textbf{Probabilistic CFG (PCFG)} on real-world datasets, we can assign probabilities to rules to calculate the \textit{most likely} explanation.
     \end{itemize}
@@ -186,10 +186,10 @@ error: expected '}' at end of input
             \small
             \begin{equation*}
             \begin{aligned}
-                B &\to \textbf{L} \, B \, \textbf{R} \, B & (\textcolor{red}{11.1\%})\\
-                B &\to \textbf{L} \, B \, \textbf{R} & (\textcolor{red}{11.1\%})\\
-                B &\to \textbf{L} \, \textbf{R} \, B & (\textcolor{red}{33.3\%})\\
                 B &\to \textbf{L} \, \textbf{R} & (\textcolor{red}{44.4\%})\\
+                B &\to \textbf{L} \, \textbf{R} \, B & (\textcolor{red}{33.3\%})\\
+                B &\to \textbf{L} \, B \, \textbf{R} & (\textcolor{red}{11.1\%})\\
+                B &\to \textbf{L} \, B \, \textbf{R} \, B & (\textcolor{red}{11.1\%})\\
                 \textbf{L} &\to \texttt{(} & (100\%)\\
                 \textbf{R} &\to \texttt{)} & (100\%)
             \end{aligned}
@@ -251,14 +251,7 @@ error: expected '}' at end of input
                 \end{column}
             \end{columns}
         \end{column}
-        
     \end{columns}
-
-    \begin{center}
-        \small{\textbf{Conclusion:} 
-        \textcolor{red}{\texttt{(}}\texttt{)}\textcolor{red}{\texttt{(}}\texttt{)} is a more common structure than \textcolor{red}{\texttt{((}}\texttt{))}.
-        Thus, a better correction for \texttt{))))}.}
-    \end{center}
 \end{frame}
 
 % \begin{frame}{Future work for AXps}
@@ -307,7 +300,7 @@ error: expected '}' at end of input
         \node[box] {
             \textbf{The Open Question:}\\
             How can we prioritise \textbf{Abductive Explanations}? \\
-            Is a structural failure at index 1 probabilistically "worse" than a failure at indices 2 and 3?
+            Is a structural failure at index 1 probabilistically ``worse'' than a failure at indices 2 and 3?
         };
     \end{tikzpicture}
     \end{center}
@@ -368,7 +361,6 @@ error: expected '}' at end of input
 
 
 \begin{frame}{Project Plan \& Timeline}
-    \textbf{Objective:} Timely completion of Phase 3 and thesis write-up.
     
     \vspace{0.4cm}
     \begin{center}
@@ -404,7 +396,6 @@ error: expected '}' at end of input
     \end{center}
     
     \vspace{0.4cm}
-    \small{\textit{Feasibility Note:} The mathematical duality established in Phase 1 provides a robust foundation that drastically reduces the exploratory overhead for Phases 2 and 3.}
 \end{frame}
 
 \begin{frame}
@@ -414,91 +405,3 @@ error: expected '}' at end of input
         \normalsize{Questions?}
     \end{center}
 \end{frame}
-
-\begin{frame}{Questions?}
-    \vspace{0.4cm}
-    \begin{center}
-        \vspace{0.4cm}
-        \Large{\textbf{Thank You!}}\\[0.6cm]
-        
-        \normalsize{\textbf{Jaime}}\\
-        
-        \footnotesize{\texttt{jaime.cuartasgranada@monash.edu}}\\
-    \end{center}
-\end{frame}
-
-% \begin{frame}{Methodology: The Modified CYK Algorithm}
-%     \begin{itemize}
-%         \item To verify if a set of indices $S$ is a valid CXp, we must check if replacing those tokens with wildcards ($\Sigma$) allows the word to be accepted.
-%         \item We achieve this by modifying the base case of the \textbf{CYK Parsing Algorithm}:
-%     \end{itemize}
-    
-%     \vspace{0.2cm}
-%     \begin{block}{Modified Base Case Initialization}
-%         For each token $w_i$ at index $i$:
-%         \begin{itemize}
-%             \item \textbf{If $i \notin S$ (Fixed):} $T[i,i] = \{A \in V \mid A \to w_i\}$
-%             \item \textbf{If $i \in S$ (Freed/Wildcard):} $T[i,i] = \{A \in V \mid \exists \alpha \in \Sigma, A \to \alpha\}$
-%         \end{itemize}
-%     \end{block}
-    
-%     \vspace{0.2cm}
-%     \small{\textit{Result: If the Start symbol $S$ appears at the top of the table $T[1,n]$, then the candidate set $S$ is a valid CXp.}}
-% \end{frame}
-
-
-
-% \begin{frame}{Visualizing Extraction: Greedy Deletion}
-%     \textbf{Algorithm Insight:} We start by freeing the \textit{entire} word, then greedily lock tokens back into place one by one. If locking a token breaks the parsing, it belongs in our minimal CXp.
-
-%     \vspace{0.3cm}
-%     \textbf{Example: $w = \texttt{))))}$, checking CXp candidate $S = \{1, 2\}$}
-    
-%     % A simplified visual of the CYK bottom row to avoid overwhelming the slide
-%     \begin{center}
-%     \begin{tikzpicture}[
-%         cell/.style={rectangle, draw, minimum width=1.5cm, minimum height=0.8cm, align=center, font=\small},
-%         lbl/.style={font=\footnotesize\ttfamily}
-%     ]
-%         % Base row nodes
-%         \node[cell, fill=red!10] (c1) {\{L, R\}};
-%         \node[cell, fill=red!10, right=0cm of c1] (c2) {\{L, R\}};
-%         \node[cell, right=0cm of c2] (c3) {\{R\}};
-%         \node[cell, right=0cm of c3] (c4) {\{R\}};
-        
-%         % Labels below
-%         \node[lbl, below=0.1cm of c1] {$w_1 = \Sigma$};
-%         \node[lbl, below=0.1cm of c2] {$w_2 = \Sigma$};
-%         \node[lbl, below=0.1cm of c3] {$w_3 = \texttt{)}$};
-%         \node[lbl, below=0.1cm of c4] {$w_4 = \texttt{)}$};
-        
-%         % Annotation
-%         %\node[above=0.3cm of c1, font=\footnotesize\color{red!70!black}, xshift=0.75cm] {Freed indices act as wildcards};
-%         \node[above=0.3cm of c1, font=\footnotesize\color{red!70!black}, xshift=0.75cm] {Wildcards};
-%         \node[above=0.3cm of c3, font=\footnotesize\color{blue!70!black}, xshift=0.75cm] {Fixed indices lock to $R \to \texttt{)}$};
-%     \end{tikzpicture}
-%     \end{center}
-    
-%     \vspace{0.1cm}
-%     \small{Because indices 1 and 2 can now act as \texttt{L} ($L \to \texttt{(}$), the CYK table successfully resolves to the Start variable, proving $\{1, 2\}$ is a valid explanation.}
-% \end{frame}
-
-% --- SLIDE 5 ---
-% \begin{frame}{Current Status: CFG Explanations}
-%     \begin{itemize}
-%         \item \textbf{Theoretical Foundation:} 
-%         \begin{itemize}
-%             \item Formalized the extension of AXps/CXps to Context-Free Languages.
-%             \item Proved the correctness of the Modified CYK approach for wildcard evaluation.
-%         \end{itemize}
-%         \vspace{0.3cm}
-%         \item \textbf{Algorithmic Implementation:}
-%         \begin{itemize}
-%             \item Currently implementing the greedy extraction algorithm (\textsc{ExtractCXp}).
-%             \item Testing extraction performance on standard balanced parenthesis (Dyck) languages.
-%         \end{itemize}
-%         \vspace{0.3cm}
-%         \item \textbf{Next Immediate Step:} Benchmarking the computational complexity of the CYK-based extraction and drafting the manuscript for this second phase of the thesis.
-%     \end{itemize}
-% \end{frame}
-

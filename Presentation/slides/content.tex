@@ -1,4 +1,3 @@
-% content moved from root `content.tex`
 
 \section{Project Summary}
 
@@ -60,7 +59,7 @@
 
 \begin{frame}{Explaining Finite Automata (Completed)}
     \begin{itemize}
-        \item FA is a mapping from an input $w \in \Sigma^*$
+        \item A Finite Automaton (FA) is a mapping from an input $w \in \Sigma^*$
         to a class $\mathcal{K} = \{\text{Accept}, \text{Reject}\}$.
     \end{itemize}
 
@@ -114,47 +113,111 @@
         \node[token, right=of w4] (w5) {b};
         \node[result, right=0.3cm of w5] {\color{green!60!black}$\rightarrow$ Accept};
 
+        % Abductive Explanation 1
+        \node[label] (lbl_axp1) at (-2, -0.9) {AXp 1:};
+        \node[token, fill=blue!10] (a1_1) at (0,-0.9) {b};
+        \node[token, fill=blue!10, right=of a1_1] (a2_1) {b};
+        \node[wildcard, right=of a2_1] (a3_1) {$\Sigma$};
+        \node[wildcard, right=of a3_1] (a4_1) {$\Sigma$};
+        \node[wildcard, right=of a4_1] (a5_1) {$\Sigma$};
+        \node[result, right=0.3cm of a5_1] {\color{blue!70!black}$\rightarrow$ Guarantees Accept $L(\texttt{bb} \Sigma \Sigma \Sigma) \subseteq L(\mathcal{A})$};
 
-        \only<1>{
-            % Abductive Explanation 1
-            \node[label] (lbl_axp1) at (-2, -0.9) {AXp 1:};
-            \node[token, fill=blue!10] (a1_1) at (0,-0.9) {b};
-            \node[token, fill=blue!10, right=of a1_1] (a2_1) {b};
-            \node[wildcard, right=of a2_1] (a3_1) {$\Sigma$};
-            \node[wildcard, right=of a3_1] (a4_1) {$\Sigma$};
-            \node[wildcard, right=of a4_1] (a5_1) {$\Sigma$};
-            \node[result, right=0.3cm of a5_1] {\color{blue!70!black}$\rightarrow$ Guarantees Accept $L(\texttt{bb} \Sigma \Sigma \Sigma) \subseteq L(\mathcal{A})$};
-
-            % Abductive Explanation 2
-            \node[label] (lbl_axp2) at (-2, -1.8) {AXp 2:};
-            \node[wildcard] (a1_2) at (0,-1.8) {$\Sigma$};
-            \node[wildcard, right=of a1_2] (a2_2) {$\Sigma$};
-            \node[token, fill=blue!10, right=of a2_2] (a3_2) {b};
-            \node[wildcard, right=of a3_2] (a4_2) {$\Sigma$};
-            \node[wildcard, right=of a4_2] (a5_2) {$\Sigma$};
-            \node[result, right=0.3cm of a5_2] {\color{blue!70!black}$\rightarrow$ Guarantees Accept $L(\Sigma \Sigma \texttt{b} \Sigma \Sigma) \subseteq L(\mathcal{A})$};
-        }
-
-        \only<2>{
-            % Contrastive Explanation 1 
-            \node[label] (lbl_cxp1) at (-2, -0.9) {CXp 1:};
-            \node[wildcard, fill=red!10] (c1_1) at (0,-0.9) {$\Sigma$};
-            \node[token, right=of c1_1] (c2_1) {b};
-            \node[wildcard, fill=red!10, right=of c2_1] (c3_1) {$\Sigma$};
-            \node[token, right=of c3_1] (c4_1) {b};
-            \node[token, right=of c4_1] (c5_1) {b};
-            \node[result, right=0.3cm of c5_1] {\color{red!70!black}$\rightarrow$ Enables Reject $L(\Sigma \texttt{b} \Sigma \texttt{bb}) \not\subseteq L(\mathcal{A})$};
-
-            % Contrastive Explanation 2
-            \node[label] (lbl_cxp2) at (-2, -1.8) {CXp 2:};
-            \node[token] (c1_2) at (0,-1.8) {b};
-            \node[wildcard, fill=red!10, right=of c1_2] (c2_2) {$\Sigma$};
-            \node[wildcard, fill=red!10, right=of c2_2] (c3_2) {$\Sigma$};
-            \node[token, right=of c3_2] (c4_2) {b};
-            \node[token, right=of c4_2] (c5_2) {b};
-            \node[result, right=0.3cm of c5_2] {\color{red!70!black}$\rightarrow$ Enables Reject $L(\texttt{b} \Sigma \Sigma \texttt{bb}) \not\subseteq L(\mathcal{A})$};
-        }
+        % Abductive Explanation 2
+        \node[label] (lbl_axp2) at (-2, -1.8) {AXp 2:};
+        \node[wildcard] (a1_2) at (0,-1.8) {$\Sigma$};
+        \node[wildcard, right=of a1_2] (a2_2) {$\Sigma$};
+        \node[token, fill=blue!10, right=of a2_2] (a3_2) {b};
+        \node[wildcard, right=of a3_2] (a4_2) {$\Sigma$};
+        \node[wildcard, right=of a4_2] (a5_2) {$\Sigma$};
+        \node[result, right=0.3cm of a5_2] {\color{blue!70!black}$\rightarrow$ Guarantees Accept $L(\Sigma \Sigma \texttt{b} \Sigma \Sigma) \subseteq L(\mathcal{A})$};
+    
     \end{tikzpicture}
     }
     \end{center}
+    \let\thefootnote\relax\footnotetext{\tiny{
+        Available on arXiv: ``A Formal Framework for the Explanation of Finite Automata Decisions''.
+        %
+        Submitted to ICALP 2026.}}
+\end{frame}
+
+
+\begin{frame}{Explaining Finite Automata (Completed)}
+    \begin{itemize}
+        \item A Finite Automaton (FA) is a mapping from an input $w \in \Sigma^*$
+        to a class $\mathcal{K} = \{\text{Accept}, \text{Reject}\}$.
+    \end{itemize}
+
+    \begin{center}
+    \scalebox{0.8}{
+    \begin{tikzpicture}[shorten >=1pt, node distance=1cm, on grid, auto, initial text=, thick]
+      \tikzstyle{every state}=[fill={rgb:black,1;white,10}, minimum size=18pt, inner sep=1pt]
+
+      % Nodes
+      \node[state, initial]            (q0) {0};
+      \node[state]        (q1) [right=1.8cm of q0, yshift=0.4cm] {1};
+      \node[state, opacity=0.3]                     (q2) [right=1.8cm of q0, yshift=-0.4cm] {2};
+      \node[state]        (q3) [right=1.8cm of q1] {3};
+      \node[state]        (q4) [right=1.8cm of q3] {4};
+      \node[state, accepting, double, opacity=0.3]  (q5) [right=3.6cm of q2] {5};
+
+      % Edges
+      \path[->]
+        (q0) edge node[xshift=8pt, yshift=-1pt] {\texttt{a}} (q1)
+             edge[draw opacity=0.3] node[xshift=-5pt, yshift=-2pt] {\texttt{b}} (q2)
+        (q1) edge node[yshift=-2pt] {\texttt{a,b}} (q3)
+        (q2) edge[draw opacity=0.3] node[yshift=-2pt] {\texttt{b}} (q5)
+             edge[draw opacity=0.3] node[xshift=2pt, yshift=-2pt] {\texttt{a}} (q3)
+        (q3) edge node[yshift=-2pt] {\texttt{a}} (q4)
+             edge[draw opacity=0.3] node[xshift=-3pt, yshift=-2pt] {\texttt{b}} (q5)
+        (q4) edge[loop right] node[xshift=-2pt] {\texttt{a,b}} (q4)
+        (q5) edge[loop right, opacity=0.3] node[xshift=-2pt] {\texttt{a,b}} (q5);
+    \end{tikzpicture}
+    }
+    \end{center}
+
+    \vspace{-0.2cm}
+    % Explanations Block
+    \begin{center}
+    \scalebox{0.8}{ 
+    \begin{tikzpicture}[
+        node distance=0.2cm,
+        token/.style={rectangle, draw, minimum size=0.55cm, font=\ttfamily},
+        wildcard/.style={rectangle, draw, minimum size=0.55cm, font=\ttfamily},
+        % FIX 1: Lock the left label widths so 'AXp' and 'CXp' take the exact same space
+        label/.style={font=\small\bfseries, text width=1.5cm, align=left}, 
+        % FIX 2: Lock the right text widths so the bounding box never grows or shrinks
+        result/.style={font=\small, text width=6.5cm, align=left} 
+    ]
+        %Input word
+        \node[label] (lbl_w) at (-2, 0) {Input $w$:};
+        \node[token] (w1) at (0,0) {b};
+        \node[token, right=of w1] (w2) {b};
+        \node[token, right=of w2] (w3) {b};
+        \node[token, right=of w3] (w4) {b};
+        \node[token, right=of w4] (w5) {b};
+        \node[result, right=0.3cm of w5] {\color{green!60!black}$\rightarrow$ Accept};
+
+        % Contrastive Explanation 1 
+        \node[label] (lbl_cxp1) at (-2, -0.9) {CXp:};
+        \node[wildcard, fill=red!10] (c1_1) at (0,-0.9) {$\Sigma$};
+        \node[token, right=of c1_1] (c2_1) {b};
+        \node[wildcard, fill=red!10, right=of c2_1] (c3_1) {$\Sigma$};
+        \node[token, right=of c3_1] (c4_1) {b};
+        \node[token, right=of c4_1] (c5_1) {b};
+        \node[result, right=0.3cm of c5_1] {\color{red!70!black}$\rightarrow$ Enables Reject $L(\Sigma \texttt{b} \Sigma \texttt{bb}) \not\subseteq L(\mathcal{A})$};
+
+        \node[wildcard, fill=red!10] (c1_1) at (0,-1.8) {a};
+        \node[token, right=of c1_1] (c2_1) {b};
+        \node[wildcard, fill=red!10, right=of c2_1] (c3_1) {a};
+        \node[token, right=of c3_1] (c4_1) {b};
+        \node[token, right=of c4_1] (c5_1) {b};
+        \node[result, right=0.3cm of c5_1] {};
+    
+    \end{tikzpicture}
+    }
+    \end{center}
+    \let\thefootnote\relax\footnotetext{\tiny{
+        Available on arXiv: ``A Formal Framework for the Explanation of Finite Automata Decisions''.
+        %
+        Submitted to ICALP 2026.}}
 \end{frame}
