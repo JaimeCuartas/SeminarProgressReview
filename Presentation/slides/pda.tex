@@ -43,7 +43,7 @@ error: expected '}' at end of input
 \section{Current Research: Explaining CFGs}
 
 \begin{frame}{Fragility of Acceptance vs. Robustness of Rejection}
-    In Context-Free Languages (like balanced parentheses):
+    In Context-Free Languages. Consider balanced parentheses language $L=\{\texttt{()},\texttt{(())},\texttt{()()},\dots\}$:
     
     \vspace{0.3cm}
     \begin{columns}[T]
@@ -137,7 +137,7 @@ error: expected '}' at end of input
 \end{frame}
 
 
-\begin{frame}{The Ambiguity Problem \& Phase 3 Transition}
+\begin{frame}{Ranking Explanations}
     \begin{itemize}
         \item \textbf{The Limitation of Standard CFGs:} Our algorithm successfully extracts minimal CXps, but it treats all valid corrections equally.
     \end{itemize}
@@ -172,8 +172,7 @@ error: expected '}' at end of input
     \end{itemize}
 \end{frame}
 
-% --- SLIDE 10: Resolving Ambiguity with PCFGs ---
-\begin{frame}{Phase 3: Deducing Responsibility with PCFGs}
+\begin{frame}{Deducing Responsibility with PCFGs}
     \begin{itemize}
         \item By training a \textbf{Probabilistic CFG (PCFG)} on real-world datasets, we can assign probabilities to rules to calculate the \textit{most likely} explanation.
     \end{itemize}
@@ -187,12 +186,12 @@ error: expected '}' at end of input
             \small
             \begin{equation*}
             \begin{aligned}
-                B &\to \mathbf{L} \, B \, \mathbf{R} \, B & (\textcolor{red}{11.1\%})\\
-                B &\to \mathbf{L} \, B \, \mathbf{R} & (\textcolor{red}{11.1\%})\\
-                B &\to \mathbf{L} \, \mathbf{R} \, B & (\textcolor{red}{33.3\%})\\
-                B &\to \mathbf{L} \, \mathbf{R} & (\textcolor{red}{44.4\%})\\
-                \mathbf{L} &\to \texttt{(} & (100\%)\\
-                \mathbf{R} &\to \texttt{)} & (100\%)
+                B &\to \textbf{L} \, B \, \textbf{R} \, B & (\textcolor{red}{11.1\%})\\
+                B &\to \textbf{L} \, B \, \textbf{R} & (\textcolor{red}{11.1\%})\\
+                B &\to \textbf{L} \, \textbf{R} \, B & (\textcolor{red}{33.3\%})\\
+                B &\to \textbf{L} \, \textbf{R} & (\textcolor{red}{44.4\%})\\
+                \textbf{L} &\to \texttt{(} & (100\%)\\
+                \textbf{R} &\to \texttt{)} & (100\%)
             \end{aligned}
             \end{equation*}
 
@@ -408,11 +407,23 @@ error: expected '}' at end of input
     \small{\textit{Feasibility Note:} The mathematical duality established in Phase 1 provides a robust foundation that drastically reduces the exploratory overhead for Phases 2 and 3.}
 \end{frame}
 
-\begin{frame}{Resources \& Skills Training}    
+\begin{frame}
     \vspace{0.6cm}
     \begin{center}
         \Large{\textbf{Thank You}}\\
         \normalsize{Questions?}
+    \end{center}
+\end{frame}
+
+\begin{frame}{Questions?}
+    \vspace{0.4cm}
+    \begin{center}
+        \vspace{0.4cm}
+        \Large{\textbf{Thank You!}}\\[0.6cm]
+        
+        \normalsize{\textbf{Jaime}}\\
+        
+        \footnotesize{\texttt{jaime.cuartasgranada@monash.edu}}\\
     \end{center}
 \end{frame}
 
